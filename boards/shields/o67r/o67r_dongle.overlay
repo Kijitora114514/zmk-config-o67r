@@ -20,9 +20,9 @@
     encoders {
         encoder0: encoder_dongle_0 {
             compatible = "alps,ec11";
-            a-gpios = <&gpio0 10 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
-            b-gpios = <&gpio0 11 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
-            steps = <15>;  // エンコーダの仕様に合わせて（データシート確認）
+            a-gpios = <&gpio0 02 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+            b-gpios = <&gpio0 03 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+            steps = <15>;
             status = "okay";
         };
     };
