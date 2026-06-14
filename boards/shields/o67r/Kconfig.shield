@@ -1,0 +1,17 @@
+config SHIELD_O67R_DONGLE
+    def_bool $(shields_list_contains,o67r_dongle)
+
+config SHIELD_O67R_USB_DONGLE
+    def_bool $(shields_list_contains,o67r_usb_dongle)
+
+config SHIELD_O67R_PROSPECTOR
+    def_bool $(shields_list_contains,o67r_prospector)
+
+config SHIELD_O67R_LEFT_CENTRAL
+    def_bool $(shields_list_contains,o67r_left_central)
+
+config SHIELD_O67R_LEFT
+    def_bool $(shields_list_contains,o67r_left)
+
+config SHIELD_O67R_RIGHT
+    def_bool $(shields_list_contains,o67r_right)

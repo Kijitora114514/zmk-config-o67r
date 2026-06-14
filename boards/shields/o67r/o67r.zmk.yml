@@ -1,0 +1,26 @@
+# This file was generated from a template. Edit it to match your keyboard.
+# See https://zmk.dev/docs/development/hardware-integration/hardware-metadata-files
+# for instructions.
+
+file_format: "1"
+id: o67r
+name: o67r
+type: shield
+
+# Set this to a URL that documents the keyboard.
+url: https://example.com
+
+# Add any features your keyboard supports here.
+# See https://zmk.dev/docs/development/hardware-integration/hardware-metadata-files#features
+features:
+  - keys
+  - studio
+  - underglow
+requires:
+  - seeed_xiao
+  - mdbt50q
+siblings:
+  - o67r_dongle
+  - o67r_left_central
+  - o67r_left
+  - o67r_right

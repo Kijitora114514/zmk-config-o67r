@@ -1,0 +1,18 @@
+// This file was generated from a template. Edit it to match your keyboard.
+// See https://zmk.dev/docs/development/hardware-integration/new-shield for more
+// instructions.
+
+#include "o67r.dtsi"
+
+&kscan {
+    compatible = "zmk,kscan-gpio-direct";
+    //wakeup-source;
+    input-gpios
+        = <&gpio1 14 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // toggle
+        , <&gpio1 13 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // white
+        , <&gpio0 05 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // unlock
+        , <&gpio0 04 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // hui
+        , <&gpio0 29 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // fullcolor
+        ;
+};
+
