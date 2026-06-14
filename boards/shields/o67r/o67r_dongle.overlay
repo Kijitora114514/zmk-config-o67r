@@ -16,3 +16,20 @@
         ;
 };
 
+/ {
+    encoders {
+        encoder0: encoder_dongle_0 {
+            compatible = "alps,ec11";
+            a-gpios = <&gpio0 10 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+            b-gpios = <&gpio0 11 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+            steps = <15>;  // エンコーダの仕様に合わせて（データシート確認）
+            status = "okay";
+        };
+    };
+
+    sensors {
+        compatible = "zmk,keymap-sensors";
+        sensors = <&encoder0>;
+        triggers-per-rotation = <10>;
+    };
+};

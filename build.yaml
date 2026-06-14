@@ -3,22 +3,22 @@ include:
     shield: o67r_dongle
     snippet: studio-rpc-usb-uart
     cmake-args: -DCONFIG_ZMK_STUDIO=y
-  - board: mdbt50q_rx
-    shield: o67r_usb_dongle
-    snippet: studio-rpc-usb-uart
-    cmake-args: -DCONFIG_ZMK_STUDIO=y
-  - board: mdbt50q_rx
-    shield: o67r_left_central
-    snippet: studio-rpc-usb-uart
-    cmake-args: -DCONFIG_ZMK_STUDIO=y
+#  - board: mdbt50q_rx
+#    shield: o67r_usb_dongle
+#    snippet: studio-rpc-usb-uart
+#    cmake-args: -DCONFIG_ZMK_STUDIO=y
+#  - board: mdbt50q_rx
+#    shield: o67r_left_central
+#    snippet: studio-rpc-usb-uart
+#    cmake-args: -DCONFIG_ZMK_STUDIO=y
 
 
-  - board: mdbt50q_rx
-    shield: o67r_left
-    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
-  - board: mdbt50q_rx
-    shield: o67r_right
-    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
+#  - board: mdbt50q_rx
+#    shield: o67r_left
+#    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
+#  - board: mdbt50q_rx
+#    shield: o67r_right
+#    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
   - board: xiao_ble
     shield: settings_reset
   - board: mdbt50q_rx
