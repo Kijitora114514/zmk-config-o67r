@@ -8,11 +8,11 @@
     compatible = "zmk,kscan-gpio-direct";
     //wakeup-source;
     input-gpios
-        = <&gpio1 14 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // toggle
-        , <&gpio1 13 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // white
-        , <&gpio0 05 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // unlock
-        , <&gpio0 04 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // hui
-        , <&gpio0 29 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // fullcolor
+        = <&gpio0 02 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // toggle
+        , <&gpio0 03 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // white
+        , <&gpio0 28 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // unlock
+        , <&gpio0 29 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // hui
+        , <&gpio0 04 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // fullcolor
         ;
 };
 
@@ -20,9 +20,25 @@
     encoders {
         encoder0: encoder_dongle_0 {
             compatible = "alps,ec11";
-            a-gpios = <&gpio0 02 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
-            b-gpios = <&gpio0 03 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+            a-gpios = <&gpio0 05 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+            b-gpios = <&gpio1 11 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
             steps = <15>;
+            status = "okay";
+        };
+
+        encoder1: encoder_dongle_1 {
+            compatible = "alps,ec11";
+            a-gpios = <&gpio1 12 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+            b-gpios = <&gpio1 13 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+            steps = <80>;
+            status = "okay";
+        };
+
+        encoder2: encoder_dongle_1 {
+            compatible = "alps,ec11";
+            a-gpios = <&gpio1 14 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+            b-gpios = <&gpio1 15 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+            steps = <80>;
             status = "okay";
         };
     };

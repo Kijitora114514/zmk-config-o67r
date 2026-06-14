@@ -10,8 +10,6 @@
 //&studio_unlockに昔は必要だった？
 
 / {
-    // Define a default keymap here.
-    // See https://zmk.dev/docs/development/hardware-integration/new-shield#default-keymap.
     keymap {
         compatible = "zmk,keymap";
 
@@ -25,7 +23,10 @@
                 &kp LSHFT  &kp Z     &kp X     &kp C   &kp V   &kp B   &kp LBKT      &kp RBKT   &kp N      &kp M    &kp COMMA  &kp DOT    &kp SLASH  &kp RSHFT
                 &kp LCTRL  &kp LWIN  &kp LALT  &studio_unlock  &mo 1   &kp LANG2     &kp SPACE  &kp SPACE  &kp LANG1  &mo 1    &kp LEFT   &kp UP     &kp DOWN   &kp RIGHT
             >;
-            sensor-bindings = <&inc_dec_kp A S>;
+            sensor-bindings =
+                <&inc_dec_kp Q W>
+                <&inc_dec_kp A S>
+                <&inc_dec_kp Z X>;
         };
 
         layer1 {
@@ -38,7 +39,10 @@
                 &kp LSHFT  &kp Z     &kp X     &kp C   &kp V   &kp B   &kp LBKT   &kp RBKT   &kp N      &kp M    &kp COMMA  &kp DOT    &kp SLASH  &kp RSHFT
                 &kp LCTRL  &kp LWIN  &kp LALT  &studio_unlock  &trans  &kp LANG2  &kp SPACE  &kp SPACE  &kp LANG1  &trans   &kp HOME   &kp PG_UP  &kp PG_DN  &kp END
             >;
-            sensor-bindings = <&inc_dec_kp A S>;
+            sensor-bindings =
+                <&inc_dec_kp Q W>
+                <&inc_dec_kp A S>
+                <&inc_dec_kp Z X>;
         };
 
         layer2 {
@@ -51,7 +55,10 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&inc_dec_kp A S>;
+            sensor-bindings =
+                <&inc_dec_kp Q W>
+                <&inc_dec_kp A S>
+                <&inc_dec_kp Z X>;
         };
 
         layer3 {
@@ -64,7 +71,10 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&inc_dec_kp A S>;
+            sensor-bindings =
+                <&inc_dec_kp Q W>
+                <&inc_dec_kp A S>
+                <&inc_dec_kp Z X>;
         };
 
         layer4 {
@@ -77,7 +87,10 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&inc_dec_kp A S>;
+            sensor-bindings =
+                <&inc_dec_kp Q W>
+                <&inc_dec_kp A S>
+                <&inc_dec_kp Z X>;
         };
 
         layer5 {
@@ -90,7 +103,10 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&inc_dec_kp A S>;
+            sensor-bindings =
+                <&inc_dec_kp Q W>
+                <&inc_dec_kp A S>
+                <&inc_dec_kp Z X>;
         };
 
         layer6 {
@@ -103,7 +119,10 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&inc_dec_kp A S>;
+            sensor-bindings =
+                <&inc_dec_kp Q W>
+                <&inc_dec_kp A S>
+                <&inc_dec_kp Z X>;
         };
 
         layer7 {
@@ -116,7 +135,10 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&inc_dec_kp A S>;
+            sensor-bindings =
+                <&inc_dec_kp Q W>
+                <&inc_dec_kp A S>
+                <&inc_dec_kp Z X>;
         };
 
         layer8 {
@@ -129,7 +151,10 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&inc_dec_kp A S>;
+            sensor-bindings =
+                <&inc_dec_kp Q W>
+                <&inc_dec_kp A S>
+                <&inc_dec_kp Z X>;
         };
 
         layer9 {
@@ -142,7 +167,10 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&inc_dec_kp A S>;
+            sensor-bindings =
+                <&inc_dec_kp Q W>
+                <&inc_dec_kp A S>
+                <&inc_dec_kp Z X>;
         };
     };
 };
