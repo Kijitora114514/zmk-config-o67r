@@ -24,8 +24,8 @@
                 &kp LCTRL  &kp LWIN  &kp LALT  &studio_unlock  &mo 1   &kp LANG2     &kp SPACE  &kp SPACE  &kp LANG1  &mo 1    &kp LEFT   &kp UP     &kp DOWN   &kp RIGHT
             >;
             sensor-bindings =
-                <&inc_dec_kp Q W>
-                <&inc_dec_kp A S>
+                <&inc_dec_kp Q W>,
+                <&inc_dec_kp A S>,
                 <&inc_dec_kp Z X>;
         };
 
@@ -40,8 +40,9 @@
                 &kp LCTRL  &kp LWIN  &kp LALT  &studio_unlock  &trans  &kp LANG2  &kp SPACE  &kp SPACE  &kp LANG1  &trans   &kp HOME   &kp PG_UP  &kp PG_DN  &kp END
             >;
             sensor-bindings =
-                <&inc_dec_kp Q W>
-                <&inc_dec_kp A S>
+            sensor-bindings =
+                <&inc_dec_kp Q W>,
+                <&inc_dec_kp A S>,
                 <&inc_dec_kp Z X>;
         };
 
@@ -56,8 +57,8 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
             sensor-bindings =
-                <&inc_dec_kp Q W>
-                <&inc_dec_kp A S>
+                <&inc_dec_kp Q W>,
+                <&inc_dec_kp A S>,
                 <&inc_dec_kp Z X>;
         };
 
@@ -72,8 +73,8 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
             sensor-bindings =
-                <&inc_dec_kp Q W>
-                <&inc_dec_kp A S>
+                <&inc_dec_kp Q W>,
+                <&inc_dec_kp A S>,
                 <&inc_dec_kp Z X>;
         };
 
@@ -88,8 +89,8 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
             sensor-bindings =
-                <&inc_dec_kp Q W>
-                <&inc_dec_kp A S>
+                <&inc_dec_kp Q W>,
+                <&inc_dec_kp A S>,
                 <&inc_dec_kp Z X>;
         };
 
@@ -104,8 +105,8 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
             sensor-bindings =
-                <&inc_dec_kp Q W>
-                <&inc_dec_kp A S>
+                <&inc_dec_kp Q W>,
+                <&inc_dec_kp A S>,
                 <&inc_dec_kp Z X>;
         };
 
@@ -120,8 +121,8 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
             sensor-bindings =
-                <&inc_dec_kp Q W>
-                <&inc_dec_kp A S>
+                <&inc_dec_kp Q W>,
+                <&inc_dec_kp A S>,
                 <&inc_dec_kp Z X>;
         };
 
@@ -136,8 +137,8 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
             sensor-bindings =
-                <&inc_dec_kp Q W>
-                <&inc_dec_kp A S>
+                <&inc_dec_kp Q W>,
+                <&inc_dec_kp A S>,
                 <&inc_dec_kp Z X>;
         };
 
@@ -152,8 +153,8 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
             sensor-bindings =
-                <&inc_dec_kp Q W>
-                <&inc_dec_kp A S>
+                <&inc_dec_kp Q W>,
+                <&inc_dec_kp A S>,
                 <&inc_dec_kp Z X>;
         };
 
@@ -168,8 +169,8 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
             sensor-bindings =
-                <&inc_dec_kp Q W>
-                <&inc_dec_kp A S>
+                <&inc_dec_kp Q W>,
+                <&inc_dec_kp A S>,
                 <&inc_dec_kp Z X>;
         };
     };
