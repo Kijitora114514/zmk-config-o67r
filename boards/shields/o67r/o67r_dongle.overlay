@@ -34,7 +34,7 @@
             status = "okay";
         };
 
-        encoder2: encoder_dongle_1 {
+        encoder2: encoder_dongle_2 {
             compatible = "alps,ec11";
             a-gpios = <&gpio1 14 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
             b-gpios = <&gpio1 15 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
