@@ -40,7 +40,6 @@
                 &kp LCTRL  &kp LWIN  &kp LALT  &studio_unlock  &trans  &kp LANG2  &kp SPACE  &kp SPACE  &kp LANG1  &trans   &kp HOME   &kp PG_UP  &kp PG_DN  &kp END
             >;
             sensor-bindings =
-            sensor-bindings =
                 <&inc_dec_kp Q W>,
                 <&inc_dec_kp A S>,
                 <&inc_dec_kp Z X>;
