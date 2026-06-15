@@ -1,0 +1,23 @@
+&spi0 {
+    compatible = "nordic,nrf-spim";
+    status = "okay";
+    pinctrl-0 = <&spi0_default>;
+    pinctrl-names = "default";
+    cs-gpios = <&xiaoba_d 3 GPIO_ACTIVE_LOW>; // D3をCSに指定
+
+    gc9a01: gc9a01@0 {
+        compatible = "galaxycore,gc9a01"; // カスタムドライバの識別子
+        reg = <0>;
+        spi-max-frequency = <24000000>; // SPIクロック（24MHz等）
+        dc-gpios = <&xiaoba_d 1 GPIO_ACTIVE_HIGH>;  // D1
+        reset-gpios = <&xiaoba_d 2 GPIO_ACTIVE_LOW>; // D2
+        width = <240>;
+        height = <240>;
+    };
+};
+
+/ {
+    chosen {
+        zephyr,display = &gc9a01;
+    };
+};

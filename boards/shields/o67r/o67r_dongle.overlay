@@ -7,15 +7,17 @@
 &kscan {
     compatible = "zmk,kscan-gpio-direct";
     //wakeup-source;
-    input-gpios
+    /*input-gpios
         = <&gpio0 02 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // toggle
         , <&gpio0 03 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // white
         , <&gpio0 28 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // unlock
         , <&gpio0 29 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // hui
         , <&gpio0 04 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // fullcolor
         ;
+    */
 };
 
+/*
 / {
     encoders {
         encoder0: encoder_dongle_0 {
@@ -48,4 +50,11 @@
         sensors = <&encoder0 &encoder1 &encoder2>;
         triggers-per-rotation = <10>;
     };
+};
+*/
+
+/ {
+   chosen {
+      zephyr,display = &gc9a01;
+  };
 };
