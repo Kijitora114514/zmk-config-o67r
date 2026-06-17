@@ -1,4 +1,0 @@
-/*
- * Display wiring is shield-specific. Keep the XIAO BLE board overlay neutral so
- * o67r_dongle can provide its own GC9A01 node and pin mapping.
- */
