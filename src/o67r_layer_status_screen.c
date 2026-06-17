@@ -8,8 +8,20 @@
 
 #include <zmk/display/status_screen.h>
 #include <zmk/display/widgets/layer_status.h>
+#include <zmk/keymap.h>
 
 static struct zmk_widget_layer_status layer_status_widget;
+
+static void set_initial_layer_text(lv_obj_t *label) {
+    zmk_keymap_layer_index_t index = zmk_keymap_highest_layer_active();
+    const char *name = zmk_keymap_layer_name(zmk_keymap_layer_index_to_id(index));
+
+    if (name != NULL && name[0] != '\0') {
+        lv_label_set_text(label, name);
+    } else {
+        lv_label_set_text_fmt(label, "Layer %u", index);
+    }
+}
 
 lv_obj_t *zmk_display_status_screen(void) {
     lv_obj_t *screen = lv_obj_create(NULL);
@@ -18,8 +30,10 @@ lv_obj_t *zmk_display_status_screen(void) {
     zmk_widget_layer_status_init(&layer_status_widget, screen);
 
     lv_obj_t *layer_label = zmk_widget_layer_status_obj(&layer_status_widget);
+    lv_obj_set_width(layer_label, 220);
     lv_obj_set_style_text_font(layer_label, &lv_font_montserrat_32, LV_PART_MAIN);
     lv_obj_set_style_text_align(layer_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    set_initial_layer_text(layer_label);
     lv_obj_align(layer_label, LV_ALIGN_CENTER, 0, 0);
 
     return screen;
