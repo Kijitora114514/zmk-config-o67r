@@ -14,7 +14,7 @@ static struct zmk_widget_layer_status layer_status_widget;
 
 #define LAYER_LABEL_WIDTH 170
 #define LAYER_LABEL_HEIGHT 44
-#define LAYER_LABEL_Y_OFFSET 28
+#define LAYER_LABEL_Y_OFFSET 0
 
 static void set_initial_layer_text(lv_obj_t *label) {
     zmk_keymap_layer_index_t index = zmk_keymap_highest_layer_active();
