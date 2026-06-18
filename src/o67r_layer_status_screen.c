@@ -50,9 +50,9 @@ static void style_pattern_arc(lv_obj_t *arc, uint32_t color, lv_coord_t width) {
 }
 
 static void create_pattern_arc(lv_obj_t *screen, uint16_t start, uint16_t end) {
-    lv_obj_t *border = lv_arc_create(screen);
-    style_pattern_arc(border, PATTERN_BORDER_COLOR, PATTERN_BORDER_WIDTH);
-    lv_arc_set_angles(border, start, end);
+    //lv_obj_t *border = lv_arc_create(screen);
+    //style_pattern_arc(border, PATTERN_BORDER_COLOR, PATTERN_BORDER_WIDTH);
+    //lv_arc_set_angles(border, start, end);
 
     lv_obj_t *fill = lv_arc_create(screen);
     style_pattern_arc(fill, PATTERN_FILL_COLOR, PATTERN_FILL_WIDTH);
