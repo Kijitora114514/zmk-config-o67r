@@ -17,7 +17,7 @@ static struct zmk_widget_layer_status layer_status_widget;
 //#define LAYER_LABEL_Y_OFFSET 28
 #define LAYER_LABEL_Y_OFFSET 14
 
-#define PATTERN_SIZE 218
+#define PATTERN_SIZE 212
 #define PATTERN_BORDER_WIDTH 50
 #define PATTERN_FILL_WIDTH 44
 #define PATTERN_BORDER_COLOR 0x9aa1a8
@@ -60,10 +60,10 @@ static void create_pattern_arc(lv_obj_t *screen, uint16_t start, uint16_t end) {
 }
 
 static void create_background_pattern(lv_obj_t *screen) {
-    create_pattern_arc(screen, 8, 82);
-    create_pattern_arc(screen, 98, 172);
-    create_pattern_arc(screen, 188, 262);
-    create_pattern_arc(screen, 278, 352);
+    create_pattern_arc(screen, 18, 72);
+    create_pattern_arc(screen, 108, 162);
+    create_pattern_arc(screen, 198, 252);
+    create_pattern_arc(screen, 288, 342);
 }
 
 lv_obj_t *zmk_display_status_screen(void) {
