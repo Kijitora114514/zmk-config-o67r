@@ -15,11 +15,12 @@ static struct zmk_widget_layer_status layer_status_widget;
 #define LAYER_LABEL_WIDTH 170
 #define LAYER_LABEL_HEIGHT 44
 //#define LAYER_LABEL_Y_OFFSET 28
-#define LAYER_LABEL_Y_OFFSET 14
+//#define LAYER_LABEL_Y_OFFSET 14
+#define LAYER_LABEL_Y_OFFSET 0
 
 #define PATTERN_SIZE 212
-#define PATTERN_BORDER_WIDTH 42
-#define PATTERN_FILL_WIDTH 36
+#define PATTERN_BORDER_WIDTH 50
+#define PATTERN_FILL_WIDTH 44
 #define PATTERN_BORDER_COLOR 0x9aa1a8
 #define PATTERN_FILL_COLOR 0x1457a7
 
@@ -34,6 +35,7 @@ static void set_initial_layer_text(lv_obj_t *label) {
     }
 }
 
+#if 0
 static void style_pattern_arc(lv_obj_t *arc, uint32_t color, lv_coord_t width) {
     lv_obj_remove_style_all(arc);
     lv_obj_set_size(arc, PATTERN_SIZE, PATTERN_SIZE);
@@ -50,9 +52,9 @@ static void style_pattern_arc(lv_obj_t *arc, uint32_t color, lv_coord_t width) {
 }
 
 static void create_pattern_arc(lv_obj_t *screen, uint16_t start, uint16_t end) {
-    //lv_obj_t *border = lv_arc_create(screen);
-    //style_pattern_arc(border, PATTERN_BORDER_COLOR, PATTERN_BORDER_WIDTH);
-    //lv_arc_set_angles(border, start, end);
+    lv_obj_t *border = lv_arc_create(screen);
+    style_pattern_arc(border, PATTERN_BORDER_COLOR, PATTERN_BORDER_WIDTH);
+    lv_arc_set_angles(border, start, end);
 
     lv_obj_t *fill = lv_arc_create(screen);
     style_pattern_arc(fill, PATTERN_FILL_COLOR, PATTERN_FILL_WIDTH);
@@ -60,18 +62,19 @@ static void create_pattern_arc(lv_obj_t *screen, uint16_t start, uint16_t end) {
 }
 
 static void create_background_pattern(lv_obj_t *screen) {
-    create_pattern_arc(screen, 22, 68);
-    create_pattern_arc(screen, 112, 158);
-    create_pattern_arc(screen, 202, 248);
-    create_pattern_arc(screen, 292, 338);
+    create_pattern_arc(screen, 18, 72);
+    create_pattern_arc(screen, 108, 162);
+    create_pattern_arc(screen, 198, 252);
+    create_pattern_arc(screen, 288, 342);
 }
+#endif
 
 lv_obj_t *zmk_display_status_screen(void) {
     lv_obj_t *screen = lv_obj_create(NULL);
     lv_obj_clear_flag(screen, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_set_style_bg_color(screen, lv_color_hex(0x000000), LV_PART_MAIN);
 
-    create_background_pattern(screen);
+    // create_background_pattern(screen);
 
     zmk_widget_layer_status_init(&layer_status_widget, screen);
 
