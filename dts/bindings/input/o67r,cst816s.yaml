@@ -1,0 +1,16 @@
+description: CST816S touchscreen used by the O67R custom status screen
+
+compatible: "o67r,cst816s"
+
+include: i2c-device.yaml
+
+properties:
+  irq-gpios:
+    type: phandle-array
+    required: true
+    description: Touch interrupt signal.
+
+  rst-gpios:
+    type: phandle-array
+    required: true
+    description: Touch controller reset signal.
