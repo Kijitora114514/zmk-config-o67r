@@ -11,7 +11,7 @@
     display_bl: display-bl {
         gpio-hog;
         gpios = <11 GPIO_ACTIVE_LOW>;
-        output-active;
+        output-low;
     };
 };
 
