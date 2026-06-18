@@ -8,8 +8,8 @@ manifest:
       url-base: https://github.com/rschenk
     - name: carrefinho
       url-base: https://github.com/carrefinho
-#    - name: amrithvenkat
-#      url-base: https://github.com/amrithvenkat
+    - name: amrithvenkat
+      url-base: https://github.com/amrithvenkat
 
   projects:
     - name: zmk
@@ -25,9 +25,9 @@ manifest:
       revision: v0.4 # 4.x
 
     # GC9A01A
-#    - name: gc9a01a_zephyr_driver
-#      remote: amrithvenkat
-#      revision: main
+    - name: gc9a01a_zephyr_driver
+      remote: amrithvenkat
+      revision: main
 
   self:
     path: config
