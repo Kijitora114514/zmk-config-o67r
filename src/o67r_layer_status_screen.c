@@ -32,6 +32,9 @@ static struct zmk_widget_layer_status layer_status_widget;
 
 static lv_obj_t *touch_dot;
 static int64_t touch_dot_expires_at;
+static lv_coord_t last_touch_x;
+static lv_coord_t last_touch_y;
+static bool has_last_touch;
 
 static void set_initial_layer_text(lv_obj_t *label) {
     zmk_keymap_layer_index_t index = zmk_keymap_highest_layer_active();
@@ -102,11 +105,16 @@ static void update_touch_dot(lv_coord_t x, lv_coord_t y) {
     lv_obj_clear_flag(touch_dot, LV_OBJ_FLAG_HIDDEN);
     lv_obj_move_foreground(touch_dot);
     touch_dot_expires_at = k_uptime_get() + TOUCH_DOT_VISIBLE_MS;
+    last_touch_x = x;
+    last_touch_y = y;
+    has_last_touch = true;
 }
 
 static void touch_poll_timer_cb(lv_timer_t *timer) {
     lv_coord_t x;
     lv_coord_t y;
+    bool touch_is_new;
+    int irq_active;
 
     ARG_UNUSED(timer);
 
@@ -115,13 +123,25 @@ static void touch_poll_timer_cb(lv_timer_t *timer) {
     }
 
     if (cst816s_read_touch(&x, &y)) {
-        update_touch_dot(x, y);
+        irq_active = gpio_pin_get_dt(&cst816s_irq);
+        touch_is_new = !has_last_touch || x != last_touch_x || y != last_touch_y || irq_active > 0;
+
+        if (touch_is_new) {
+            update_touch_dot(x, y);
+        }
+
+        if (touch_dot_expires_at != 0 && k_uptime_get() >= touch_dot_expires_at) {
+            lv_obj_add_flag(touch_dot, LV_OBJ_FLAG_HIDDEN);
+            touch_dot_expires_at = 0;
+        }
+
         return;
     }
 
     if (touch_dot_expires_at != 0 && k_uptime_get() >= touch_dot_expires_at) {
         lv_obj_add_flag(touch_dot, LV_OBJ_FLAG_HIDDEN);
         touch_dot_expires_at = 0;
+        has_last_touch = false;
     }
 }
 
@@ -146,6 +166,7 @@ static void init_touch_status(lv_obj_t *screen) {
     gpio_pin_configure_dt(&cst816s_irq, GPIO_INPUT);
 
     touch_dot = lv_obj_create(screen);
+    lv_obj_remove_style_all(touch_dot);
     lv_obj_set_size(touch_dot, TOUCH_DOT_SIZE, TOUCH_DOT_SIZE);
     lv_obj_set_style_radius(touch_dot, LV_RADIUS_CIRCLE, LV_PART_MAIN);
     lv_obj_set_style_bg_color(touch_dot, lv_color_hex(0xff0000), LV_PART_MAIN);
