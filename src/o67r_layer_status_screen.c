@@ -49,8 +49,8 @@ static void set_initial_layer_text(lv_obj_t *label) {
 #if DT_NODE_HAS_STATUS(CST816S_NODE, okay)
 
 static const struct i2c_dt_spec cst816s_i2c = I2C_DT_SPEC_GET(CST816S_NODE);
-static const struct gpio_dt_spec cst816s_int = GPIO_DT_SPEC_GET(CST816S_NODE, int_gpios);
-static const struct gpio_dt_spec cst816s_reset = GPIO_DT_SPEC_GET(CST816S_NODE, reset_gpios);
+static const struct gpio_dt_spec cst816s_irq = GPIO_DT_SPEC_GET(CST816S_NODE, irq_gpios);
+static const struct gpio_dt_spec cst816s_reset = GPIO_DT_SPEC_GET(CST816S_NODE, rst_gpios);
 
 static lv_coord_t clamp_touch_coord(uint16_t coord) {
     if (coord > CST816S_MAX_COORD) {
@@ -138,12 +138,12 @@ static void reset_cst816s(void) {
 }
 
 static void init_touch_status(lv_obj_t *screen) {
-    if (!device_is_ready(cst816s_i2c.bus) || !gpio_is_ready_dt(&cst816s_int)) {
+    if (!device_is_ready(cst816s_i2c.bus) || !gpio_is_ready_dt(&cst816s_irq)) {
         return;
     }
 
     reset_cst816s();
-    gpio_pin_configure_dt(&cst816s_int, GPIO_INPUT);
+    gpio_pin_configure_dt(&cst816s_irq, GPIO_INPUT);
 
     touch_dot = lv_obj_create(screen);
     lv_obj_set_size(touch_dot, TOUCH_DOT_SIZE, TOUCH_DOT_SIZE);
