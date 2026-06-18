@@ -1,5 +1,5 @@
 include:
-  - board: xiao_ble
+  - board: xiao_ble//zmk
     shield: o67r_dongle
     snippet: studio-rpc-usb-uart
     cmake-args: -DCONFIG_ZMK_STUDIO=y
@@ -19,7 +19,7 @@ include:
 #  - board: mdbt50q_rx
 #    shield: o67r_right
 #    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
-  - board: xiao_ble
+  - board: xiao_ble//zmk
     shield: settings_reset
   - board: mdbt50q_rx
     shield: settings_reset
