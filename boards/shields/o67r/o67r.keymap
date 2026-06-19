@@ -11,6 +11,14 @@
 //&studio_unlockに昔は必要だった？
 
 / {
+    behaviors {
+        inc_dec_msc: inc_dec_msc {
+            compatible = "zmk,behavior-sensor-rotate-var";
+            #sensor-binding-cells = <2>;
+            bindings = <&msc>, <&msc>;
+        };
+    };
+
     keymap {
         compatible = "zmk,keymap";
 
