@@ -3,11 +3,12 @@
 
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
-#include <dt-bindings/zmk/rgb.h>
+//#include <dt-bindings/zmk/rgb.h>
 #include <dt-bindings/zmk/bt.h>
 #include <input/processors.dtsi>
 #include <behaviors/input_processor_absolute_to_relative.dtsi>
 #include <mouse-gesture.dtsi>
+#include <dt-bindings/zmk/pointing.h>
 
 //#include <dt-bindings/zmk/studio.h>
 //&studio_unlockに昔は必要だった？
@@ -19,7 +20,7 @@
         default_layer {
             display-name = "Base";
             bindings = <
-                &rgb_ug RGB_TOG      &rgb_ug RGB_COLOR_HSB(0, 0, 5)      &studio_unlock        &rgb_ug RGB_HUI     &rgb_ug RGB_COLOR_HSB(180, 100, 5)
+                &studio_unlock       &msc SCRL_UP  &msc SCRL_DOWN  &msc SCRL_LEFT  &msc SCRL_RIGHT
                 &kp ESC    &kp N1    &kp N2    &kp N3  &kp N4  &kp N5  &bt BT_CLR    &kp N6     &kp N7     &kp N8   &kp N9     &kp N0     &kp EQUAL  &kp BSPC
                 &kp GRAVE  &kp Q     &kp W     &kp E   &kp R   &kp T   &bt BT_NXT    &kp Y      &kp U      &kp I    &kp O      &kp MINUS  &kp P      &kp BSLH
                 &kp TAB    &kp A     &kp S     &kp D   &kp F   &kp G   &kp SQT       &kp DEL    &kp H      &kp J    &kp K      &kp L      &kp SEMI   &kp ENTER
@@ -32,7 +33,7 @@
         };
 
         layer1 {
-            display-name = "Function";
+            display-name = "FUNC";
             bindings = <
                 &trans &trans &trans &trans &trans
                 &kp PSCRN  &kp F1    &kp F2    &kp F3  &kp F4  &kp F5  &trans     &kp F6     &kp F7     &kp F8   &kp F9     &kp F10    &kp EQUAL  &kp BSPC

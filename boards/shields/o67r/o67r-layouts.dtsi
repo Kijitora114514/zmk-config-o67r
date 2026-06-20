@@ -14,11 +14,11 @@
         // if your keyboard will not support ZMK Studio.
         // https://zmk.dev/docs/development/hardware-integration/physical-layouts#optional-keys-property
         keys  //                     w   h    x     y     rot    rx    ry
-            = <&key_physical_attrs 100  60  500     0       0     0     0>
-            , <&key_physical_attrs 100  60  600     0       0     0     0>
-            , <&key_physical_attrs 100  60  700     0       0     0     0>
-            , <&key_physical_attrs 100  60  800     0       0     0     0>
-            , <&key_physical_attrs 100  60  900     0       0     0     0>
+            = <&key_physical_attrs  50  50   25    25       0     0     0>
+            , <&key_physical_attrs  50  50  125     0      45     0     0>
+            , <&key_physical_attrs  50  50  125    50      45     0     0>
+            , <&key_physical_attrs  50  50  100    25      45     0     0>
+            , <&key_physical_attrs  50  50  150    25      45     0     0>
 
             , <&key_physical_attrs 100 100    0   100       0     0     0>
             , <&key_physical_attrs 100 100  100   100       0     0     0>

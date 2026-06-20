@@ -8,9 +8,9 @@
     compatible = "zmk,kscan-gpio-direct";
     //wakeup-source;
     input-gpios
-        = <&gpio1 07 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // toggle
+        = <&gpio0 28 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // unlock
+        , <&gpio1 07 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // toggle
         , <&gpio1 05 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // white
-        , <&gpio1 03 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // unlock
         , <&gpio0 31 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // hui
         , <&gpio0 10 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // fullcolor
         ;
