@@ -33,8 +33,8 @@ static lv_color_t rgb_to_bgr(const lv_color_filter_dsc_t *filter, lv_color_t col
 
     return (lv_color_t){
         .red = color.blue,
-        .green = color.red,
-        .blue = color.green,
+        .green = color.green,
+        .blue = color.red,
     };
 }
 
