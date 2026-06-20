@@ -41,16 +41,18 @@ static lv_color_t rgb_to_gbr(const lv_color_filter_dsc_t *filter, lv_color_t col
 static const struct i2c_dt_spec cst816s_i2c = I2C_DT_SPEC_GET(CST816S_NODE);
 static lv_obj_t *swipe_label;
 static bool touch_active;
+static uint16_t touch_start_x;
 static uint16_t touch_start_y;
+static uint16_t touch_last_x;
 static uint16_t touch_last_y;
 
-static void send_mouse_scroll(int16_t amount) {
-    zmk_hid_mouse_scroll_set(0, amount);
+static void send_mouse_scroll(int16_t x, int16_t y) {
+    zmk_hid_mouse_scroll_set(x, y);
     zmk_endpoint_send_mouse_report();
     zmk_hid_mouse_scroll_set(0, 0);
 }
 
-static int cst816s_read_touch_y(uint16_t *y) {
+static int cst816s_read_touch_position(uint16_t *x, uint16_t *y) {
     uint8_t touch_count;
     uint8_t xy[4];
     int ret;
@@ -69,27 +71,35 @@ static int cst816s_read_touch_y(uint16_t *y) {
         return ret;
     }
 
+    *x = ((uint16_t)(xy[0] & 0x0f) << 8) | xy[1];
     *y = ((uint16_t)(xy[2] & 0x0f) << 8) | xy[3];
     return 1;
 }
 
 static void touch_poll_timer_cb(lv_timer_t *timer) {
+    uint16_t x;
     uint16_t y;
+    int32_t delta_x;
+    int32_t delta_y;
+    int32_t distance_x;
+    int32_t distance_y;
     int touch_state;
 
     LV_UNUSED(timer);
 
-    touch_state = cst816s_read_touch_y(&y);
+    touch_state = cst816s_read_touch_position(&x, &y);
     if (touch_state < 0) {
         return;
     }
 
     if (touch_state > 0) {
         if (!touch_active) {
+            touch_start_x = x;
             touch_start_y = y;
             touch_active = true;
         }
 
+        touch_last_x = x;
         touch_last_y = y;
         return;
     }
@@ -98,12 +108,27 @@ static void touch_poll_timer_cb(lv_timer_t *timer) {
         return;
     }
 
-    if ((int32_t)touch_start_y - (int32_t)touch_last_y >= SWIPE_THRESHOLD) {
-        lv_label_set_text(swipe_label, "UP");
-        send_mouse_scroll(ZMK_POINTING_DEFAULT_SCRL_VAL);
-    } else if ((int32_t)touch_last_y - (int32_t)touch_start_y >= SWIPE_THRESHOLD) {
-        lv_label_set_text(swipe_label, "DOWN");
-        send_mouse_scroll(-ZMK_POINTING_DEFAULT_SCRL_VAL);
+    delta_x = (int32_t)touch_last_x - (int32_t)touch_start_x;
+    delta_y = (int32_t)touch_last_y - (int32_t)touch_start_y;
+    distance_x = delta_x < 0 ? -delta_x : delta_x;
+    distance_y = delta_y < 0 ? -delta_y : delta_y;
+
+    if (distance_x > distance_y && distance_x >= SWIPE_THRESHOLD) {
+        if (delta_x < 0) {
+            lv_label_set_text(swipe_label, "LEFT");
+            send_mouse_scroll(-ZMK_POINTING_DEFAULT_SCRL_VAL, 0);
+        } else {
+            lv_label_set_text(swipe_label, "RIGHT");
+            send_mouse_scroll(ZMK_POINTING_DEFAULT_SCRL_VAL, 0);
+        }
+    } else if (distance_y >= SWIPE_THRESHOLD) {
+        if (delta_y < 0) {
+            lv_label_set_text(swipe_label, "UP");
+            send_mouse_scroll(0, ZMK_POINTING_DEFAULT_SCRL_VAL);
+        } else {
+            lv_label_set_text(swipe_label, "DOWN");
+            send_mouse_scroll(0, -ZMK_POINTING_DEFAULT_SCRL_VAL);
+        }
     }
 
     touch_active = false;
