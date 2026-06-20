@@ -160,7 +160,7 @@ static void create_separator(lv_obj_t *screen, lv_coord_t x, lv_coord_t y, lv_co
     lv_obj_remove_style_all(separator);
     lv_obj_set_pos(separator, x, y);
     lv_obj_set_size(separator, width, height);
-    lv_obj_set_style_bg_color(separator, lv_color_hex(0xb0b0b0), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(separator, lv_color_hex(0x808080), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(separator, LV_OPA_COVER, LV_PART_MAIN);
     lv_obj_clear_flag(separator, LV_OBJ_FLAG_SCROLLABLE);
 }
