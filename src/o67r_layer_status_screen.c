@@ -8,11 +8,11 @@
 
 #include <zephyr/device.h>
 #include <zephyr/drivers/i2c.h>
-#include <zephyr/kernel.h>
 
-#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/pointing.h>
 #include <zmk/display/status_screen.h>
-#include <zmk/events/keycode_state_changed.h>
+#include <zmk/endpoints.h>
+#include <zmk/hid.h>
 
 #define SCREEN_SIZE 240
 #define CST816S_TOUCHES_REG 0x02
@@ -43,24 +43,11 @@ static lv_obj_t *swipe_label;
 static bool touch_active;
 static uint16_t touch_start_y;
 static uint16_t touch_last_y;
-static uint32_t pressed_keycode;
 
-static void key_release_work_handler(struct k_work *work) {
-    LV_UNUSED(work);
-
-    raise_zmk_keycode_state_changed_from_encoded(pressed_keycode, false, k_uptime_get());
-}
-
-K_WORK_DELAYABLE_DEFINE(key_release_work, key_release_work_handler);
-
-static void send_key_tap(uint32_t keycode) {
-    if (k_work_delayable_is_pending(&key_release_work)) {
-        return;
-    }
-
-    pressed_keycode = keycode;
-    raise_zmk_keycode_state_changed_from_encoded(keycode, true, k_uptime_get());
-    k_work_schedule(&key_release_work, K_MSEC(20));
+static void send_mouse_scroll(int16_t amount) {
+    zmk_hid_mouse_scroll_set(0, amount);
+    zmk_endpoint_send_mouse_report();
+    zmk_hid_mouse_scroll_set(0, 0);
 }
 
 static int cst816s_read_touch_y(uint16_t *y) {
@@ -113,10 +100,10 @@ static void touch_poll_timer_cb(lv_timer_t *timer) {
 
     if ((int32_t)touch_start_y - (int32_t)touch_last_y >= SWIPE_THRESHOLD) {
         lv_label_set_text(swipe_label, "UP");
-        send_key_tap(A);
+        send_mouse_scroll(ZMK_POINTING_DEFAULT_SCRL_VAL);
     } else if ((int32_t)touch_last_y - (int32_t)touch_start_y >= SWIPE_THRESHOLD) {
         lv_label_set_text(swipe_label, "DOWN");
-        send_key_tap(S);
+        send_mouse_scroll(-ZMK_POINTING_DEFAULT_SCRL_VAL);
     }
 
     touch_active = false;
