@@ -9,8 +9,6 @@
     //wakeup-source;
     input-gpios
         = <&gpio0 28 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // unlock
-        , <&gpio0 15 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // SCRL_LEFT
-        , <&gpio0 19 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // SCRL_RIGHT
         ;
     
 };
