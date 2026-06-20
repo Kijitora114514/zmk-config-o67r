@@ -165,6 +165,16 @@ static void create_separator(lv_obj_t *screen, lv_coord_t x, lv_coord_t y, lv_co
     lv_obj_clear_flag(separator, LV_OBJ_FLAG_SCROLLABLE);
 }
 
+static void create_rotated_number(lv_obj_t *screen, const char *text, lv_coord_t x, lv_coord_t y,
+                                  int32_t rotation) {
+    lv_obj_t *label = lv_label_create(screen);
+    lv_label_set_text(label, text);
+    lv_obj_set_style_text_color(label, lv_color_hex(0xb0b0b0), LV_PART_MAIN);
+    lv_obj_set_style_text_font(label, &lv_font_montserrat_32, LV_PART_MAIN);
+    lv_obj_set_style_transform_rotation(label, rotation, LV_PART_MAIN);
+    lv_obj_align(label, LV_ALIGN_CENTER, x - (SCREEN_SIZE / 2), y - (SCREEN_SIZE / 2));
+}
+
 static void init_touchpad_overlay(lv_obj_t *screen) {
     if (TP_DEBUG) {
         swipe_label = lv_label_create(screen);
@@ -182,6 +192,11 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
     create_separator(screen, 140, 120, 81, 2);
     create_separator(screen, 120, 20, 2, 81);
     create_separator(screen, 120, 140, 2, 81);
+
+    create_rotated_number(screen, "1", 60, 60, 450);
+    create_rotated_number(screen, "2", 180, 60, 1350);
+    create_rotated_number(screen, "3", 180, 180, 2250);
+    create_rotated_number(screen, "4", 60, 180, 3150);
 }
 
 static void init_swipe_status(lv_obj_t *screen) {
