@@ -172,7 +172,6 @@ static void create_rotated_number(lv_obj_t *screen, const char *text, lv_coord_t
     lv_obj_t *label = lv_label_create(screen);
     lv_label_set_text(label, text);
     lv_obj_set_style_text_color(label, lv_color_hex(DISPLAY_GRAY_HEX), LV_PART_MAIN);
-    lv_obj_set_style_text_opa(label, LV_OPA_50, LV_PART_MAIN);
     lv_obj_set_style_text_font(label, &lv_font_montserrat_32, LV_PART_MAIN);
     lv_obj_set_style_transform_rotation(label, rotation, LV_PART_MAIN);
     lv_obj_align(label, LV_ALIGN_CENTER, x - (SCREEN_SIZE / 2), y - (SCREEN_SIZE / 2));
@@ -183,7 +182,6 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
         swipe_label = lv_label_create(screen);
         lv_label_set_text(swipe_label, "");
         lv_obj_set_style_text_color(swipe_label, lv_color_hex(0xffffff), LV_PART_MAIN);
-        lv_obj_set_style_text_opa(swipe_label, LV_OPA_50, LV_PART_MAIN);
         lv_obj_set_style_text_font(swipe_label, &lv_font_montserrat_32, LV_PART_MAIN);
         lv_obj_set_style_bg_color(swipe_label, lv_color_hex(0x000000), LV_PART_MAIN);
         lv_obj_set_style_bg_opa(swipe_label, LV_OPA_70, LV_PART_MAIN);
