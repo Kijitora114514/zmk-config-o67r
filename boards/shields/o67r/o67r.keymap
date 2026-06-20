@@ -35,7 +35,7 @@
         layer1 {
             display-name = "FUNC";
             bindings = <
-                &trans &trans &trans &trans &trans
+                &trans &trans &trans &trans &trans &trans &trans &trans &trans
                 &kp PSCRN  &kp F1    &kp F2    &kp F3  &kp F4  &kp F5  &trans     &kp F6     &kp F7     &kp F8   &kp F9     &kp F10    &kp EQUAL  &kp BSPC
                 &kp GRAVE  &kp Q     &kp W     &kp E   &kp R   &kp T   &trans     &kp Y      &kp U      &kp I    &kp O      &kp MINUS  &kp P      &kp BSLH
                 &kp TAB    &kp A     &kp S     &kp D   &kp F   &kp G   &kp SQT    &kp DEL    &kp H      &kp J    &kp K      &kp L      &kp SEMI   &kp KP_ENTER
@@ -50,7 +50,7 @@
         layer2 {
             display-name = "Layer2";
             bindings = <
-                &none &none &none &none &none
+                &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
@@ -65,7 +65,7 @@
         layer3 {
             display-name = "Layer3";
             bindings = <
-                &none &none &none &none &none
+                &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
@@ -80,7 +80,7 @@
         layer4 {
             display-name = "Layer4";
             bindings = <
-                &none &none &none &none &none
+                &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
@@ -95,7 +95,7 @@
         layer5 {
             display-name = "Layer5";
             bindings = <
-                &none &none &none &none &none
+                &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
@@ -110,7 +110,7 @@
         layer6 {
             display-name = "Layer6";
             bindings = <
-                &none &none &none &none &none
+                &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
@@ -125,7 +125,7 @@
         layer7 {
             display-name = "Layer7";
             bindings = <
-                &none &none &none &none &none
+                &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
@@ -140,7 +140,7 @@
         layer8 {
             display-name = "Layer8";
             bindings = <
-                &none &none &none &none &none
+                &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
@@ -155,7 +155,7 @@
         layer9 {
             display-name = "Layer9";
             bindings = <
-                &none &none &none &none &none
+                &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
