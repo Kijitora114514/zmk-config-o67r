@@ -193,10 +193,10 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
     create_separator(screen, 120, 20, 2, 81);
     create_separator(screen, 120, 140, 2, 81);
 
-    create_rotated_number(screen, "1", 60, 60, 450);
-    create_rotated_number(screen, "2", 180, 60, 1350);
-    create_rotated_number(screen, "3", 180, 180, 2250);
-    create_rotated_number(screen, "4", 60, 180, 3150);
+    create_rotated_number(screen, "1", 60, 60, 0);
+    create_rotated_number(screen, "2", 180, 60, 0);
+    create_rotated_number(screen, "3", 180, 180, 0);
+    create_rotated_number(screen, "4", 60, 180, 0);
 }
 
 static void init_swipe_status(lv_obj_t *screen) {
