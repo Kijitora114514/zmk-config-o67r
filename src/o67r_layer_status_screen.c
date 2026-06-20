@@ -169,7 +169,7 @@ static void create_rotated_number(lv_obj_t *screen, const char *text, lv_coord_t
                                   int32_t rotation) {
     lv_obj_t *label = lv_label_create(screen);
     lv_label_set_text(label, text);
-    lv_obj_set_style_text_color(label, lv_color_hex(0xb0b0b0), LV_PART_MAIN);
+    lv_obj_set_style_text_color(label, lv_color_hex(0x808080), LV_PART_MAIN);
     lv_obj_set_style_text_opa(label, LV_OPA_50, LV_PART_MAIN);
     lv_obj_set_style_text_font(label, &lv_font_montserrat_32, LV_PART_MAIN);
     lv_obj_set_style_transform_rotation(label, rotation, LV_PART_MAIN);
