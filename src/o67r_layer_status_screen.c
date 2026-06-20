@@ -26,6 +26,18 @@
 
 extern const lv_image_dsc_t disp;
 
+static lv_color_t rgb_to_bgr(const lv_color_filter_dsc_t *filter, lv_color_t color,
+                             lv_opa_t opacity) {
+    LV_UNUSED(filter);
+    LV_UNUSED(opacity);
+
+    return (lv_color_t){
+        .red = color.blue,
+        .green = color.green,
+        .blue = color.red,
+    };
+}
+
 #define CST816S_NODE DT_NODELABEL(cst816s)
 
 #if DT_NODE_HAS_STATUS(CST816S_NODE, okay)
@@ -181,6 +193,8 @@ static void init_swipe_status(lv_obj_t *screen) {
 #endif
 
 lv_obj_t *zmk_display_status_screen(void) {
+    static lv_color_filter_dsc_t rgb_to_bgr_filter;
+
     lv_obj_t *screen = lv_obj_create(NULL);
     lv_obj_remove_style_all(screen);
     lv_obj_set_size(screen, SCREEN_SIZE, SCREEN_SIZE);
@@ -189,6 +203,9 @@ lv_obj_t *zmk_display_status_screen(void) {
     lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, LV_PART_MAIN);
 
     lv_obj_t *image = lv_image_create(screen);
+    lv_color_filter_dsc_init(&rgb_to_bgr_filter, rgb_to_bgr);
+    lv_obj_set_style_color_filter_dsc(image, &rgb_to_bgr_filter, LV_PART_MAIN);
+    lv_obj_set_style_color_filter_opa(image, LV_OPA_COVER, LV_PART_MAIN);
     lv_image_set_src(image, &disp);
     lv_obj_center(image);
 
