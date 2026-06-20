@@ -20,6 +20,7 @@
 #define CST816S_XY_REG 0x03
 #define SWIPE_THRESHOLD 30
 #define TOUCH_POLL_MS 20
+#define TAP_RELEASE_MS 20
 #define IMAGE_DATA_SIZE (SCREEN_SIZE * SCREEN_SIZE * 2)
 /* 0x808080 pre-corrected for the display's RGB565 byte order. */
 #define DISPLAY_GRAY_HEX 0x101021
@@ -63,7 +64,7 @@ static uint16_t touch_start_y;
 static uint16_t touch_last_x;
 static uint16_t touch_last_y;
 static uint32_t touch_key_position;
-static bool touch_key_pressed;
+static uint32_t pending_release_position;
 
 static uint32_t touch_position_from_coordinates(uint16_t x, uint16_t y) {
     if (y <= 120) {
@@ -79,6 +80,23 @@ static void set_touch_position_state(uint32_t position, bool pressed) {
                                             .position = position,
                                             .state = pressed,
                                             .timestamp = k_uptime_get()});
+}
+
+static void touch_position_release_work_handler(struct k_work *work) {
+    LV_UNUSED(work);
+    set_touch_position_state(pending_release_position, false);
+}
+
+K_WORK_DELAYABLE_DEFINE(touch_position_release_work, touch_position_release_work_handler);
+
+static void send_touch_position_tap(uint32_t position) {
+    if (k_work_delayable_is_pending(&touch_position_release_work)) {
+        return;
+    }
+
+    pending_release_position = position;
+    set_touch_position_state(position, true);
+    k_work_schedule(&touch_position_release_work, K_MSEC(TAP_RELEASE_MS));
 }
 
 static void show_swipe_direction(const char *direction) {
@@ -125,6 +143,7 @@ static void touch_poll_timer_cb(lv_timer_t *timer) {
     int32_t distance_x;
     int32_t distance_y;
     int touch_state;
+    bool swipe_detected = false;
 
     LV_UNUSED(timer);
 
@@ -140,8 +159,6 @@ static void touch_poll_timer_cb(lv_timer_t *timer) {
             touch_active = true;
 
             touch_key_position = touch_position_from_coordinates(x, y);
-            set_touch_position_state(touch_key_position, true);
-            touch_key_pressed = true;
         }
 
         touch_last_x = x;
@@ -159,6 +176,7 @@ static void touch_poll_timer_cb(lv_timer_t *timer) {
     distance_y = delta_y < 0 ? -delta_y : delta_y;
 
     if (distance_x > distance_y && distance_x >= SWIPE_THRESHOLD) {
+        swipe_detected = true;
         if (delta_x < 0) {
             show_swipe_direction("LEFT");
             send_mouse_scroll(-ZMK_POINTING_DEFAULT_SCRL_VAL, 0);
@@ -167,6 +185,7 @@ static void touch_poll_timer_cb(lv_timer_t *timer) {
             send_mouse_scroll(ZMK_POINTING_DEFAULT_SCRL_VAL, 0);
         }
     } else if (distance_y >= SWIPE_THRESHOLD) {
+        swipe_detected = true;
         if (delta_y < 0) {
             show_swipe_direction("UP");
             send_mouse_scroll(0, ZMK_POINTING_DEFAULT_SCRL_VAL);
@@ -176,9 +195,8 @@ static void touch_poll_timer_cb(lv_timer_t *timer) {
         }
     }
 
-    if (touch_key_pressed) {
-        set_touch_position_state(touch_key_position, false);
-        touch_key_pressed = false;
+    if (!swipe_detected) {
+        send_touch_position_tap(touch_key_position);
     }
 
     touch_active = false;
