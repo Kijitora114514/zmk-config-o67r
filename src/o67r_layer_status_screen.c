@@ -12,6 +12,7 @@
 #include <dt-bindings/zmk/pointing.h>
 #include <zmk/display/status_screen.h>
 #include <zmk/endpoints.h>
+#include <zmk/events/position_state_changed.h>
 #include <zmk/hid.h>
 
 #define SCREEN_SIZE 240
@@ -61,6 +62,24 @@ static uint16_t touch_start_x;
 static uint16_t touch_start_y;
 static uint16_t touch_last_x;
 static uint16_t touch_last_y;
+static uint32_t touch_key_position;
+static bool touch_key_pressed;
+
+static uint32_t touch_position_from_coordinates(uint16_t x, uint16_t y) {
+    if (y <= 120) {
+        return x <= 120 ? 5 : 6;
+    }
+
+    return x <= 120 ? 8 : 7;
+}
+
+static void set_touch_position_state(uint32_t position, bool pressed) {
+    raise_zmk_position_state_changed(
+        (struct zmk_position_state_changed){.source = ZMK_POSITION_STATE_CHANGE_SOURCE_LOCAL,
+                                            .position = position,
+                                            .state = pressed,
+                                            .timestamp = k_uptime_get()});
+}
 
 static void show_swipe_direction(const char *direction) {
     if (swipe_label != NULL) {
@@ -119,6 +138,10 @@ static void touch_poll_timer_cb(lv_timer_t *timer) {
             touch_start_x = x;
             touch_start_y = y;
             touch_active = true;
+
+            touch_key_position = touch_position_from_coordinates(x, y);
+            set_touch_position_state(touch_key_position, true);
+            touch_key_pressed = true;
         }
 
         touch_last_x = x;
@@ -151,6 +174,11 @@ static void touch_poll_timer_cb(lv_timer_t *timer) {
             show_swipe_direction("DOWN");
             send_mouse_scroll(0, -ZMK_POINTING_DEFAULT_SCRL_VAL);
         }
+    }
+
+    if (touch_key_pressed) {
+        set_touch_position_state(touch_key_position, false);
+        touch_key_pressed = false;
     }
 
     touch_active = false;
