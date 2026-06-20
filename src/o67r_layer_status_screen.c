@@ -32,9 +32,9 @@ static lv_color_t rgb_to_bgr(const lv_color_filter_dsc_t *filter, lv_color_t col
     LV_UNUSED(opacity);
 
     return (lv_color_t){
-        .red = color.red,
-        .green = color.green,
-        .blue = color.blue,
+        .red = color.green,
+        .green = color.blue,
+        .blue = color.red,
     };
 }
 
