@@ -27,31 +27,25 @@
 
 extern const lv_image_dsc_t disp;
 
-static LV_ATTRIBUTE_MEM_ALIGN uint8_t bgr_image_data[IMAGE_DATA_SIZE];
-static lv_image_dsc_t bgr_image;
+static LV_ATTRIBUTE_MEM_ALIGN uint8_t swapped_image_data[IMAGE_DATA_SIZE];
+static lv_image_dsc_t swapped_image;
 
-static const lv_image_dsc_t *get_bgr_image(void) {
+static const lv_image_dsc_t *get_byte_swapped_image(void) {
     const uint8_t *rgb_data = disp.data;
 
-    if (disp.header.cf != LV_COLOR_FORMAT_RGB565 || disp.data_size > sizeof(bgr_image_data)) {
+    if (disp.header.cf != LV_COLOR_FORMAT_RGB565 || disp.data_size > sizeof(swapped_image_data)) {
         return &disp;
     }
 
     for (uint32_t index = 0; index + 1 < disp.data_size; index += 2) {
-        uint16_t rgb = (uint16_t)rgb_data[index] | ((uint16_t)rgb_data[index + 1] << 8);
-        uint16_t red = (rgb >> 11) & 0x1f;
-        uint16_t green = (rgb >> 5) & 0x3f;
-        uint16_t blue = rgb & 0x1f;
-        uint16_t bgr = (blue << 11) | (green << 5) | red;
-
-        bgr_image_data[index] = bgr & 0xff;
-        bgr_image_data[index + 1] = bgr >> 8;
+        swapped_image_data[index] = rgb_data[index + 1];
+        swapped_image_data[index + 1] = rgb_data[index];
     }
 
-    bgr_image = disp;
-    bgr_image.data = bgr_image_data;
+    swapped_image = disp;
+    swapped_image.data = swapped_image_data;
 
-    return &bgr_image;
+    return &swapped_image;
 }
 
 #define CST816S_NODE DT_NODELABEL(cst816s)
@@ -217,7 +211,7 @@ lv_obj_t *zmk_display_status_screen(void) {
     lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, LV_PART_MAIN);
 
     lv_obj_t *image = lv_image_create(screen);
-    lv_image_set_src(image, get_bgr_image());
+    lv_image_set_src(image, get_byte_swapped_image());
     lv_obj_center(image);
 
     init_swipe_status(screen);
