@@ -26,7 +26,7 @@
 #define DISPLAY_GRAY_HEX 0x101021
 
 #ifndef TP_DEBUG
-#define TP_DEBUG false
+#define TP_DEBUG true
 #endif
 
 extern const lv_image_dsc_t disp;
