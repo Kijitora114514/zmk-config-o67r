@@ -150,7 +150,7 @@ static void create_separator(lv_obj_t *screen, lv_coord_t x, lv_coord_t y, lv_co
     lv_obj_remove_style_all(separator);
     lv_obj_set_pos(separator, x, y);
     lv_obj_set_size(separator, width, height);
-    lv_obj_set_style_bg_color(separator, lv_color_hex(0xA0A0A0), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(separator, lv_color_hex(0xb0b0b0), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(separator, LV_OPA_COVER, LV_PART_MAIN);
     lv_obj_clear_flag(separator, LV_OBJ_FLAG_SCROLLABLE);
 }
@@ -168,10 +168,10 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
         return;
     }
 
-    create_separator(screen, 10, 120, 101, 2);
-    create_separator(screen, 130, 120, 101, 2);
-    create_separator(screen, 120, 10, 2, 101);
-    create_separator(screen, 120, 130, 2, 101);
+    create_separator(screen, 20, 120, 81, 2);
+    create_separator(screen, 140, 120, 81, 2);
+    create_separator(screen, 120, 20, 2, 81);
+    create_separator(screen, 120, 140, 2, 81);
 }
 
 static void init_swipe_status(lv_obj_t *screen) {
