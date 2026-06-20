@@ -20,6 +20,10 @@
 #define SWIPE_THRESHOLD 30
 #define TOUCH_POLL_MS 20
 
+#ifndef TP_DEBUG
+#define TP_DEBUG false
+#endif
+
 extern const lv_image_dsc_t disp;
 
 static lv_color_t rgb_to_gbr(const lv_color_filter_dsc_t *filter, lv_color_t color,
@@ -45,6 +49,12 @@ static uint16_t touch_start_x;
 static uint16_t touch_start_y;
 static uint16_t touch_last_x;
 static uint16_t touch_last_y;
+
+static void show_swipe_direction(const char *direction) {
+    if (swipe_label != NULL) {
+        lv_label_set_text(swipe_label, direction);
+    }
+}
 
 static void send_mouse_scroll(int16_t x, int16_t y) {
     zmk_hid_mouse_scroll_set(x, y);
@@ -115,18 +125,18 @@ static void touch_poll_timer_cb(lv_timer_t *timer) {
 
     if (distance_x > distance_y && distance_x >= SWIPE_THRESHOLD) {
         if (delta_x < 0) {
-            lv_label_set_text(swipe_label, "LEFT");
+            show_swipe_direction("LEFT");
             send_mouse_scroll(-ZMK_POINTING_DEFAULT_SCRL_VAL, 0);
         } else {
-            lv_label_set_text(swipe_label, "RIGHT");
+            show_swipe_direction("RIGHT");
             send_mouse_scroll(ZMK_POINTING_DEFAULT_SCRL_VAL, 0);
         }
     } else if (distance_y >= SWIPE_THRESHOLD) {
         if (delta_y < 0) {
-            lv_label_set_text(swipe_label, "UP");
+            show_swipe_direction("UP");
             send_mouse_scroll(0, ZMK_POINTING_DEFAULT_SCRL_VAL);
         } else {
-            lv_label_set_text(swipe_label, "DOWN");
+            show_swipe_direction("DOWN");
             send_mouse_scroll(0, -ZMK_POINTING_DEFAULT_SCRL_VAL);
         }
     }
@@ -134,19 +144,42 @@ static void touch_poll_timer_cb(lv_timer_t *timer) {
     touch_active = false;
 }
 
-static void init_swipe_status(lv_obj_t *screen) {
-    if (!device_is_ready(cst816s_i2c.bus)) {
+static void create_separator(lv_obj_t *screen, lv_coord_t x, lv_coord_t y, lv_coord_t width,
+                             lv_coord_t height) {
+    lv_obj_t *separator = lv_obj_create(screen);
+    lv_obj_remove_style_all(separator);
+    lv_obj_set_pos(separator, x, y);
+    lv_obj_set_size(separator, width, height);
+    lv_obj_set_style_bg_color(separator, lv_color_hex(0x808080), LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(separator, LV_OPA_COVER, LV_PART_MAIN);
+    lv_obj_clear_flag(separator, LV_OBJ_FLAG_SCROLLABLE);
+}
+
+static void init_touchpad_overlay(lv_obj_t *screen) {
+    if (TP_DEBUG) {
+        swipe_label = lv_label_create(screen);
+        lv_label_set_text(swipe_label, "");
+        lv_obj_set_style_text_color(swipe_label, lv_color_hex(0xffffff), LV_PART_MAIN);
+        lv_obj_set_style_text_font(swipe_label, &lv_font_montserrat_32, LV_PART_MAIN);
+        lv_obj_set_style_bg_color(swipe_label, lv_color_hex(0x000000), LV_PART_MAIN);
+        lv_obj_set_style_bg_opa(swipe_label, LV_OPA_70, LV_PART_MAIN);
+        lv_obj_set_style_pad_all(swipe_label, 8, LV_PART_MAIN);
+        lv_obj_center(swipe_label);
         return;
     }
 
-    swipe_label = lv_label_create(screen);
-    lv_label_set_text(swipe_label, "");
-    lv_obj_set_style_text_color(swipe_label, lv_color_hex(0xffffff), LV_PART_MAIN);
-    lv_obj_set_style_text_font(swipe_label, &lv_font_montserrat_32, LV_PART_MAIN);
-    lv_obj_set_style_bg_color(swipe_label, lv_color_hex(0x000000), LV_PART_MAIN);
-    lv_obj_set_style_bg_opa(swipe_label, LV_OPA_70, LV_PART_MAIN);
-    lv_obj_set_style_pad_all(swipe_label, 8, LV_PART_MAIN);
-    lv_obj_center(swipe_label);
+    create_separator(screen, 10, 110, 101, 2);
+    create_separator(screen, 130, 110, 101, 2);
+    create_separator(screen, 110, 10, 2, 101);
+    create_separator(screen, 110, 130, 2, 101);
+}
+
+static void init_swipe_status(lv_obj_t *screen) {
+    init_touchpad_overlay(screen);
+
+    if (!device_is_ready(cst816s_i2c.bus)) {
+        return;
+    }
 
     lv_timer_create(touch_poll_timer_cb, TOUCH_POLL_MS, NULL);
 }
