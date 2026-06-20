@@ -12,8 +12,8 @@
 #include <dt-bindings/zmk/pointing.h>
 #include <zmk/display/status_screen.h>
 #include <zmk/endpoints.h>
-#include <zmk/events/position_state_changed.h>
 #include <zmk/hid.h>
+#include <zmk/keymap.h>
 
 #define SCREEN_SIZE 240
 #define CST816S_TOUCHES_REG 0x02
@@ -26,7 +26,7 @@
 #define DISPLAY_GRAY_HEX 0x101021
 
 #ifndef TP_DEBUG
-#define TP_DEBUG true
+#define TP_DEBUG false
 #endif
 
 extern const lv_image_dsc_t disp;
@@ -75,11 +75,8 @@ static uint32_t touch_position_from_coordinates(uint16_t x, uint16_t y) {
 }
 
 static void set_touch_position_state(uint32_t position, bool pressed) {
-    raise_zmk_position_state_changed(
-        (struct zmk_position_state_changed){.source = ZMK_POSITION_STATE_CHANGE_SOURCE_LOCAL,
-                                            .position = position,
-                                            .state = pressed,
-                                            .timestamp = k_uptime_get()});
+    zmk_keymap_position_state_changed(ZMK_POSITION_STATE_CHANGE_SOURCE_LOCAL, position, pressed,
+                                      k_uptime_get());
 }
 
 static void touch_position_release_work_handler(struct k_work *work) {
