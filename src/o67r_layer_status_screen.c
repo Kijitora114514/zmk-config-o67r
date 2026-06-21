@@ -72,6 +72,7 @@ static uint32_t touch_key_position;
 static uint32_t pending_release_position;
 static uint32_t current_page = 0U;
 static lv_obj_t *position_labels[4];
+static lv_obj_t *position_shadow_labels[4];
 
 static void update_position_labels(void);
 
@@ -233,14 +234,19 @@ static void create_separator(lv_obj_t *screen, lv_coord_t x, lv_coord_t y, lv_co
 }
 
 static lv_obj_t *create_rotated_number(lv_obj_t *screen, const char *text, lv_coord_t x,
-                                       lv_coord_t y, int32_t rotation) {
+                                       lv_coord_t y, int32_t rotation, lv_obj_t **shadow_label) {
+    *shadow_label = lv_label_create(screen);
+    lv_label_set_text(*shadow_label, text);
+    lv_obj_set_style_text_color(*shadow_label, lv_color_hex(0x000000), LV_PART_MAIN);
+    lv_obj_set_style_text_font(*shadow_label, &lv_font_montserrat_32, LV_PART_MAIN);
+    lv_obj_set_style_transform_rotation(*shadow_label, rotation, LV_PART_MAIN);
+    lv_obj_align(*shadow_label, LV_ALIGN_CENTER, x + 1 - (SCREEN_SIZE / 2),
+                 y + 1 - (SCREEN_SIZE / 2));
+
     lv_obj_t *label = lv_label_create(screen);
     lv_label_set_text(label, text);
-    lv_obj_set_style_text_color(label, lv_color_hex(DISPLAY_GRAY_HEX), LV_PART_MAIN);
+    lv_obj_set_style_text_color(label, lv_color_hex(0xffffff), LV_PART_MAIN);
     lv_obj_set_style_text_font(label, &lv_font_montserrat_32, LV_PART_MAIN);
-    lv_obj_set_style_outline_color(label, lv_color_hex(0x000000), LV_PART_MAIN);
-    lv_obj_set_style_outline_width(label, 1, LV_PART_MAIN);
-    lv_obj_set_style_outline_opa(label, LV_OPA_COVER, LV_PART_MAIN);
     lv_obj_set_style_transform_rotation(label, rotation, LV_PART_MAIN);
     lv_obj_align(label, LV_ALIGN_CENTER, x - (SCREEN_SIZE / 2), y - (SCREEN_SIZE / 2));
 
@@ -257,8 +263,13 @@ static void update_position_labels(void) {
         }
 
         lv_label_set_text_fmt(position_labels[index], "%u", current_page * 4U + index + 1U);
+        lv_label_set_text_fmt(position_shadow_labels[index], "%u",
+                              current_page * 4U + index + 1U);
         lv_obj_align(position_labels[index], LV_ALIGN_CENTER, label_x[index] - (SCREEN_SIZE / 2),
                      label_y[index] - (SCREEN_SIZE / 2));
+        lv_obj_align(position_shadow_labels[index], LV_ALIGN_CENTER,
+                     label_x[index] + 1 - (SCREEN_SIZE / 2),
+                     label_y[index] + 1 - (SCREEN_SIZE / 2));
     }
 }
 
@@ -280,10 +291,14 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
     create_separator(screen, 120, 20, 2, 81);
     create_separator(screen, 120, 140, 2, 81);
 
-    position_labels[0] = create_rotated_number(screen, "1", 60, 60, 0);
-    position_labels[1] = create_rotated_number(screen, "2", 180, 60, 0);
-    position_labels[2] = create_rotated_number(screen, "3", 180, 180, 0);
-    position_labels[3] = create_rotated_number(screen, "4", 60, 180, 0);
+    position_labels[0] =
+        create_rotated_number(screen, "1", 60, 60, 0, &position_shadow_labels[0]);
+    position_labels[1] =
+        create_rotated_number(screen, "2", 180, 60, 0, &position_shadow_labels[1]);
+    position_labels[2] =
+        create_rotated_number(screen, "3", 180, 180, 0, &position_shadow_labels[2]);
+    position_labels[3] =
+        create_rotated_number(screen, "4", 60, 180, 0, &position_shadow_labels[3]);
     update_position_labels();
 }
 
