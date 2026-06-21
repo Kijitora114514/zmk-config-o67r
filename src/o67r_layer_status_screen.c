@@ -176,19 +176,19 @@ static void touch_poll_timer_cb(lv_timer_t *timer) {
         swipe_detected = true;
         if (delta_x < 0) {
             show_swipe_direction("LEFT");
-            send_touch_position_tap(1);
+            send_mouse_scroll(-ZMK_POINTING_DEFAULT_SCRL_VAL, 0);
         } else {
             show_swipe_direction("RIGHT");
-            send_touch_position_tap(2);
+            send_mouse_scroll(ZMK_POINTING_DEFAULT_SCRL_VAL, 0);
         }
     } else if (distance_y >= SWIPE_THRESHOLD) {
         swipe_detected = true;
         if (delta_y < 0) {
             show_swipe_direction("UP");
-            send_mouse_scroll(-ZMK_POINTING_DEFAULT_SCRL_VAL, 0);
+            send_touch_position_tap(1);
         } else {
             show_swipe_direction("DOWN");
-            send_mouse_scroll(ZMK_POINTING_DEFAULT_SCRL_VAL, 0);
+            send_touch_position_tap(2);
         }
     }
 

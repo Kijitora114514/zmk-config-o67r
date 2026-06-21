@@ -1,0 +1,12 @@
+背景画像の変更方法
+
+1. 240 x 240 の24bitRGB画像を準備
+※空いたスペースは黒で埋めた方が良い
+
+2. 生成するファイルの元の名前は「disp.bmp」とする
+※内部にファイル名を参照して生成している部分がある為
+
+3. LVGL v9で変換してdisp.cを生成する
+※下記URLなどを使用
+https://lvgl.io/tools/imageconverter?utm_source=chatgpt.com
+
