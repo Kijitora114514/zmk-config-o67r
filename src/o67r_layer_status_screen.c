@@ -9,10 +9,7 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/i2c.h>
 
-#include <dt-bindings/zmk/pointing.h>
 #include <zmk/display/status_screen.h>
-#include <zmk/endpoints.h>
-#include <zmk/hid.h>
 #include <zmk/keymap.h>
 
 #define SCREEN_SIZE 240
@@ -27,6 +24,14 @@
 
 #ifndef TP_DEBUG
 #define TP_DEBUG false
+#endif
+
+#ifndef TP_PAGE_COUNT
+#define TP_PAGE_COUNT 3
+#endif
+
+#if TP_PAGE_COUNT < 1
+#error "TP_PAGE_COUNT must be at least 1"
 #endif
 
 extern const lv_image_dsc_t disp;
@@ -65,13 +70,28 @@ static uint16_t touch_last_x;
 static uint16_t touch_last_y;
 static uint32_t touch_key_position;
 static uint32_t pending_release_position;
+static uint32_t current_page = 0U;
 
 static uint32_t touch_position_from_coordinates(uint16_t x, uint16_t y) {
+    uint32_t page_position = current_page * 4U;
+
     if (y <= 120) {
-        return x <= 120 ? 5 : 6;
+        return page_position + (x <= 120 ? 1U : 2U);
     }
 
-    return x <= 120 ? 8 : 7;
+    return page_position + (x <= 120 ? 4U : 3U);
+}
+
+static uint32_t vertical_swipe_position(bool swipe_up) {
+    return (TP_PAGE_COUNT * 4U) + (current_page * 2U) + (swipe_up ? 1U : 2U);
+}
+
+static void change_page(int32_t direction) {
+    if (direction < 0) {
+        current_page = current_page == 0U ? TP_PAGE_COUNT - 1U : current_page - 1U;
+    } else {
+        current_page = current_page + 1U >= TP_PAGE_COUNT ? 0U : current_page + 1U;
+    }
 }
 
 static void set_touch_position_state(uint32_t position, bool pressed) {
@@ -100,12 +120,6 @@ static void show_swipe_direction(const char *direction) {
     if (swipe_label != NULL) {
         lv_label_set_text(swipe_label, direction);
     }
-}
-
-static void send_mouse_scroll(int16_t x, int16_t y) {
-    zmk_hid_mouse_scroll_set(x, y);
-    zmk_endpoint_send_mouse_report();
-    zmk_hid_mouse_scroll_set(0, 0);
 }
 
 static int cst816s_read_touch_position(uint16_t *x, uint16_t *y) {
@@ -176,19 +190,19 @@ static void touch_poll_timer_cb(lv_timer_t *timer) {
         swipe_detected = true;
         if (delta_x < 0) {
             show_swipe_direction("LEFT");
-            send_mouse_scroll(-ZMK_POINTING_DEFAULT_SCRL_VAL, 0);
+            change_page(-1);
         } else {
             show_swipe_direction("RIGHT");
-            send_mouse_scroll(ZMK_POINTING_DEFAULT_SCRL_VAL, 0);
+            change_page(1);
         }
     } else if (distance_y >= SWIPE_THRESHOLD) {
         swipe_detected = true;
         if (delta_y < 0) {
             show_swipe_direction("UP");
-            send_touch_position_tap(1);
+            send_touch_position_tap(vertical_swipe_position(true));
         } else {
             show_swipe_direction("DOWN");
-            send_touch_position_tap(2);
+            send_touch_position_tap(vertical_swipe_position(false));
         }
     }
 

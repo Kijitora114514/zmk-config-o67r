@@ -15,14 +15,30 @@
         // https://zmk.dev/docs/development/hardware-integration/physical-layouts#optional-keys-property
         keys  //                     w   h    x     y     rot    rx    ry
             = <&key_physical_attrs  50  50   25    75       0     0     0>
-            , <&key_physical_attrs 100  50  100    50      45     0     0>
-            , <&key_physical_attrs 100  50  100   100      45     0     0>
-            , <&key_physical_attrs 100  50  200    50      45     0     0>
-            , <&key_physical_attrs 100  50  200   100      45     0     0>
+            
+            , <&key_physical_attrs 100 100  100     0       0     0     0>
+            , <&key_physical_attrs 100 100  200     0       0     0     0>
+            , <&key_physical_attrs 100 100  200   100       0     0     0>
+            , <&key_physical_attrs 100 100  100   100       0     0     0>
+
             , <&key_physical_attrs 100 100  325     0       0     0     0>
             , <&key_physical_attrs 100 100  425     0       0     0     0>
             , <&key_physical_attrs 100 100  425   100       0     0     0>
             , <&key_physical_attrs 100 100  325   100       0     0     0>
+
+            , <&key_physical_attrs 100 100  550     0       0     0     0>
+            , <&key_physical_attrs 100 100  650     0       0     0     0>
+            , <&key_physical_attrs 100 100  650   100       0     0     0>
+            , <&key_physical_attrs 100 100  550   100       0     0     0>
+
+            , <&key_physical_attrs 100  50  675    50      45     0     0>
+            , <&key_physical_attrs 100  50  675   100      45     0     0>
+
+            , <&key_physical_attrs 100  50  800    50      45     0     0>
+            , <&key_physical_attrs 100  50  800   100      45     0     0>
+
+            , <&key_physical_attrs 100  50  925    50      45     0     0>
+            , <&key_physical_attrs 100  50  925   100      45     0     0>
 
             , <&key_physical_attrs 100 100    0   200       0     0     0>
             , <&key_physical_attrs 100 100  100   200       0     0     0>
