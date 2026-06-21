@@ -71,6 +71,9 @@ static uint16_t touch_last_y;
 static uint32_t touch_key_position;
 static uint32_t pending_release_position;
 static uint32_t current_page = 0U;
+static lv_obj_t *position_labels[4];
+
+static void update_position_labels(void);
 
 static uint32_t touch_position_from_coordinates(uint16_t x, uint16_t y) {
     uint32_t page_position = current_page * 4U;
@@ -92,6 +95,8 @@ static void change_page(int32_t direction) {
     } else {
         current_page = current_page + 1U >= TP_PAGE_COUNT ? 0U : current_page + 1U;
     }
+
+    update_position_labels();
 }
 
 static void set_touch_position_state(uint32_t position, bool pressed) {
@@ -224,14 +229,31 @@ static void create_separator(lv_obj_t *screen, lv_coord_t x, lv_coord_t y, lv_co
     lv_obj_clear_flag(separator, LV_OBJ_FLAG_SCROLLABLE);
 }
 
-static void create_rotated_number(lv_obj_t *screen, const char *text, lv_coord_t x, lv_coord_t y,
-                                  int32_t rotation) {
+static lv_obj_t *create_rotated_number(lv_obj_t *screen, const char *text, lv_coord_t x,
+                                       lv_coord_t y, int32_t rotation) {
     lv_obj_t *label = lv_label_create(screen);
     lv_label_set_text(label, text);
     lv_obj_set_style_text_color(label, lv_color_hex(DISPLAY_GRAY_HEX), LV_PART_MAIN);
     lv_obj_set_style_text_font(label, &lv_font_montserrat_32, LV_PART_MAIN);
     lv_obj_set_style_transform_rotation(label, rotation, LV_PART_MAIN);
     lv_obj_align(label, LV_ALIGN_CENTER, x - (SCREEN_SIZE / 2), y - (SCREEN_SIZE / 2));
+
+    return label;
+}
+
+static void update_position_labels(void) {
+    static const lv_coord_t label_x[] = {60, 180, 180, 60};
+    static const lv_coord_t label_y[] = {60, 60, 180, 180};
+
+    for (uint32_t index = 0; index < 4U; index++) {
+        if (position_labels[index] == NULL) {
+            continue;
+        }
+
+        lv_label_set_text_fmt(position_labels[index], "%u", current_page * 4U + index + 1U);
+        lv_obj_align(position_labels[index], LV_ALIGN_CENTER, label_x[index] - (SCREEN_SIZE / 2),
+                     label_y[index] - (SCREEN_SIZE / 2));
+    }
 }
 
 static void init_touchpad_overlay(lv_obj_t *screen) {
@@ -252,10 +274,11 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
     create_separator(screen, 120, 20, 2, 81);
     create_separator(screen, 120, 140, 2, 81);
 
-    create_rotated_number(screen, "1", 60, 60, 0);
-    create_rotated_number(screen, "2", 180, 60, 0);
-    create_rotated_number(screen, "3", 180, 180, 0);
-    create_rotated_number(screen, "4", 60, 180, 0);
+    position_labels[0] = create_rotated_number(screen, "1", 60, 60, 0);
+    position_labels[1] = create_rotated_number(screen, "2", 180, 60, 0);
+    position_labels[2] = create_rotated_number(screen, "3", 180, 180, 0);
+    position_labels[3] = create_rotated_number(screen, "4", 60, 180, 0);
+    update_position_labels();
 }
 
 static void init_swipe_status(lv_obj_t *screen) {
