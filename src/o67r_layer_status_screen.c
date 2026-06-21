@@ -238,6 +238,9 @@ static lv_obj_t *create_rotated_number(lv_obj_t *screen, const char *text, lv_co
     lv_label_set_text(label, text);
     lv_obj_set_style_text_color(label, lv_color_hex(DISPLAY_GRAY_HEX), LV_PART_MAIN);
     lv_obj_set_style_text_font(label, &lv_font_montserrat_32, LV_PART_MAIN);
+    lv_obj_set_style_outline_color(label, lv_color_hex(0x000000), LV_PART_MAIN);
+    lv_obj_set_style_outline_width(label, 1, LV_PART_MAIN);
+    lv_obj_set_style_outline_opa(label, LV_OPA_COVER, LV_PART_MAIN);
     lv_obj_set_style_transform_rotation(label, rotation, LV_PART_MAIN);
     lv_obj_align(label, LV_ALIGN_CENTER, x - (SCREEN_SIZE / 2), y - (SCREEN_SIZE / 2));
 
