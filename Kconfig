@@ -1,0 +1,8 @@
+config O67R_DISPLAY_BRIGHTNESS
+    int "O67R display brightness percentage"
+    default 100
+    range 0 100
+    depends on ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
+    help
+      Set the display backlight brightness from 0 (off) to 100 (maximum).
+

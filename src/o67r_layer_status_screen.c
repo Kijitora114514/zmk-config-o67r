@@ -8,6 +8,7 @@
 
 #include <zephyr/device.h>
 #include <zephyr/drivers/i2c.h>
+#include <zephyr/drivers/pwm.h>
 
 #include <zmk/display/status_screen.h>
 #include <zmk/keymap.h>
@@ -36,8 +37,22 @@
 
 extern const lv_image_dsc_t disp;
 
+#define DISPLAY_BACKLIGHT_NODE DT_NODELABEL(display_bl)
+
+static const struct pwm_dt_spec display_backlight = PWM_DT_SPEC_GET(DISPLAY_BACKLIGHT_NODE);
+
 static LV_ATTRIBUTE_MEM_ALIGN uint8_t swapped_image_data[IMAGE_DATA_SIZE];
 static lv_image_dsc_t swapped_image;
+
+static void set_display_brightness(void) {
+    if (!pwm_is_ready_dt(&display_backlight)) {
+        return;
+    }
+
+    uint32_t pulse =
+        ((uint64_t)display_backlight.period * CONFIG_O67R_DISPLAY_BRIGHTNESS) / 100U;
+    pwm_set_pulse_dt(&display_backlight, pulse);
+}
 
 static const lv_image_dsc_t *get_byte_swapped_image(void) {
     const uint8_t *rgb_data = disp.data;
@@ -326,6 +341,8 @@ static void init_swipe_status(lv_obj_t *screen) {
 #endif
 
 lv_obj_t *zmk_display_status_screen(void) {
+    set_display_brightness();
+
     lv_obj_t *screen = lv_obj_create(NULL);
     lv_obj_remove_style_all(screen);
     lv_obj_set_size(screen, SCREEN_SIZE, SCREEN_SIZE);
