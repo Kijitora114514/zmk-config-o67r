@@ -20,7 +20,7 @@
 #define TAP_RELEASE_MS 20
 #define IMAGE_DATA_SIZE (SCREEN_SIZE * SCREEN_SIZE * 2)
 /* 0x808080 pre-corrected for the display's RGB565 byte order. */
-#define DISPLAY_GRAY_HEX 0x101021
+// #define DISPLAY_GRAY_HEX 0x101021
 
 #ifndef TP_DEBUG
 #define TP_DEBUG false
@@ -221,15 +221,20 @@ static void touch_poll_timer_cb(lv_timer_t *timer) {
 
 static void create_separator(lv_obj_t *screen, lv_coord_t x, lv_coord_t y, lv_coord_t width,
                              lv_coord_t height) {
+    lv_obj_t *shadow = lv_obj_create(screen);
+    lv_obj_remove_style_all(shadow);
+    lv_obj_set_pos(shadow, x + 1, y + 1);
+    lv_obj_set_size(shadow, width, height);
+    lv_obj_set_style_bg_color(shadow, lv_color_hex(0x000000), LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(shadow, LV_OPA_COVER, LV_PART_MAIN);
+    lv_obj_clear_flag(shadow, LV_OBJ_FLAG_SCROLLABLE);
+
     lv_obj_t *separator = lv_obj_create(screen);
     lv_obj_remove_style_all(separator);
     lv_obj_set_pos(separator, x, y);
     lv_obj_set_size(separator, width, height);
-    lv_obj_set_style_bg_color(separator, lv_color_hex(DISPLAY_GRAY_HEX), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(separator, lv_color_hex(0xffffff), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(separator, LV_OPA_COVER, LV_PART_MAIN);
-    lv_obj_set_style_outline_color(separator, lv_color_hex(0x000000), LV_PART_MAIN);
-    lv_obj_set_style_outline_width(separator, 1, LV_PART_MAIN);
-    lv_obj_set_style_outline_opa(separator, LV_OPA_COVER, LV_PART_MAIN);
     lv_obj_clear_flag(separator, LV_OBJ_FLAG_SCROLLABLE);
 }
 
