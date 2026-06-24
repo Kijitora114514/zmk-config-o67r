@@ -30,6 +30,7 @@
 #define BATTERY_ARC_DEGREES 45
 #define BATTERY_ARC_COUNT 2
 #define BATTERY_ARC_UNKNOWN UINT8_MAX
+#define BATTERY_ARC_EMPTY_OPA LV_OPA_30
 /* 0x808080 pre-corrected for the display's RGB565 byte order. */
 // #define DISPLAY_GRAY_HEX 0x101021
 
@@ -93,7 +94,7 @@ static void set_battery_arc_level(uint8_t index, uint8_t level) {
         return;
     }
 
-    lv_obj_set_style_arc_opa(battery_arcs[index], level == 0U ? LV_OPA_TRANSP : LV_OPA_COVER,
+    lv_obj_set_style_arc_opa(battery_arcs[index], level == 0U ? BATTERY_ARC_EMPTY_OPA : LV_OPA_COVER,
                              LV_PART_INDICATOR);
     lv_arc_set_angles(battery_arcs[index], battery_arc_start_angles[index],
                       battery_arc_end_angle(index, level));
@@ -324,7 +325,7 @@ static lv_obj_t *create_outer_arc(lv_obj_t *screen, uint16_t start_angle, uint16
     lv_arc_set_angles(arc, start_angle, end_angle);
     lv_obj_set_style_arc_width(arc, 5, LV_PART_INDICATOR);
     lv_obj_set_style_arc_color(arc, lv_color_hex(0xffffff), LV_PART_INDICATOR);
-    lv_obj_set_style_arc_opa(arc, LV_OPA_TRANSP, LV_PART_INDICATOR);
+    lv_obj_set_style_arc_opa(arc, BATTERY_ARC_EMPTY_OPA, LV_PART_INDICATOR);
     lv_obj_set_style_bg_opa(arc, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_set_style_arc_opa(arc, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_set_style_opa(arc, LV_OPA_TRANSP, LV_PART_KNOB);
@@ -396,9 +397,9 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
     create_separator(screen, 120, 20, 1, 81);
     create_separator(screen, 120, 140, 1, 81);
     battery_arcs[0] = create_outer_arc(screen, battery_arc_start_angles[0],
-                                       battery_arc_start_angles[0], 2);
+                                       battery_arc_end_angle(0, 100U), 2);
     battery_arcs[1] = create_outer_arc(screen, battery_arc_start_angles[1],
-                                       battery_arc_start_angles[1], -2);
+                                       battery_arc_end_angle(1, 100U), -2);
     init_battery_arc_listener();
 
     for (uint8_t index = 0; index < BATTERY_ARC_COUNT; index++) {
