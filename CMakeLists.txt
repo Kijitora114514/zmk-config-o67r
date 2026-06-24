@@ -1,6 +1,8 @@
 if(CONFIG_ZMK_DISPLAY_STATUS_SCREEN_CUSTOM)
   find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
+  # Keep src/disp.c as the maintainable source and generate the display-ready
+  # byte-swapped image source during the GitHub Actions/ZMK CMake build.
   set(O67R_SWAPPED_DISP_C ${CMAKE_CURRENT_BINARY_DIR}/o67r_disp_swapped.c)
 
   execute_process(

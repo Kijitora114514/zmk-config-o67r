@@ -29,6 +29,7 @@
 #define TAP_RELEASE_MS 20
 #define BATTERY_ARC_DEGREES 45
 #define BATTERY_ARC_COUNT 2
+#define BATTERY_ARC_STEPS 10
 #define BATTERY_ARC_UNKNOWN UINT8_MAX
 /* 0x808080 pre-corrected for the display's RGB565 byte order. */
 // #define DISPLAY_GRAY_HEX 0x101021
@@ -72,8 +73,10 @@ static void set_display_brightness(void) {
 }
 
 static uint16_t battery_arc_end_angle(uint8_t index, uint8_t level) {
-    uint16_t end_angle = battery_arc_start_angles[index] +
-                         ((uint16_t)BATTERY_ARC_DEGREES * level) / 100U;
+    uint8_t step = (level + (100U / BATTERY_ARC_STEPS) - 1U) / (100U / BATTERY_ARC_STEPS);
+    uint16_t end_angle =
+        battery_arc_start_angles[index] +
+        ((uint16_t)BATTERY_ARC_DEGREES * MIN(step, BATTERY_ARC_STEPS)) / BATTERY_ARC_STEPS;
 
     return end_angle >= 360U ? end_angle - 360U : end_angle;
 }
