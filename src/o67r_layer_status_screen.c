@@ -253,11 +253,12 @@ static void create_separator(lv_obj_t *screen, lv_coord_t x, lv_coord_t y, lv_co
     lv_obj_clear_flag(separator, LV_OBJ_FLAG_SCROLLABLE);
 }
 
-static void create_outer_arc(lv_obj_t *screen, uint16_t start_angle, uint16_t end_angle) {
+static void create_outer_arc(lv_obj_t *screen, uint16_t start_angle, uint16_t end_angle,
+                             lv_coord_t x_offset) {
     lv_obj_t *arc = lv_arc_create(screen);
     lv_obj_remove_style_all(arc);
     lv_obj_set_size(arc, SCREEN_SIZE, SCREEN_SIZE);
-    lv_obj_center(arc);
+    lv_obj_align(arc, LV_ALIGN_CENTER, x_offset, 0);
     lv_arc_set_angles(arc, start_angle, end_angle);
     lv_obj_set_style_arc_width(arc, 5, LV_PART_INDICATOR);
     lv_obj_set_style_arc_color(arc, lv_color_hex(0xffffff), LV_PART_INDICATOR);
@@ -330,8 +331,8 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
     create_separator(screen, 140, 120, 81, 1);
     create_separator(screen, 120, 20, 1, 81);
     create_separator(screen, 120, 140, 1, 81);
-    create_outer_arc(screen, 338, 23);
-    create_outer_arc(screen, 158, 203);
+    create_outer_arc(screen, 338, 23, -2);
+    create_outer_arc(screen, 158, 203, 2);
 
     position_labels[0] =
         create_rotated_number(screen, "1", 60, 60, 0, &position_shadow_labels[0]);
