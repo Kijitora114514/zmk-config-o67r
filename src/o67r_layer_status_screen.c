@@ -58,7 +58,7 @@ struct battery_arc_state {
     uint8_t level;
 };
 
-static lv_obj_t *battery_arcs[BATTERY_ARC_COUNT];
+static lv_obj_t *battery_arcs[BATTERY_ARC_COUNT][BATTERY_ARC_STEPS];
 static uint8_t battery_arc_levels[BATTERY_ARC_COUNT] = {BATTERY_ARC_UNKNOWN,
                                                         BATTERY_ARC_UNKNOWN};
 static const uint16_t battery_arc_zero_angles[BATTERY_ARC_COUNT] = {240, 300};
@@ -73,29 +73,40 @@ static void set_display_brightness(void) {
     pwm_set_pulse_dt(&display_backlight, pulse);
 }
 
-static uint16_t battery_arc_level_degrees(uint8_t level) {
+static uint8_t battery_arc_level_step(uint8_t level) {
     uint8_t step = (level + (100U / BATTERY_ARC_STEPS) - 1U) / (100U / BATTERY_ARC_STEPS);
-    return ((uint16_t)BATTERY_ARC_DEGREES * MIN(step, BATTERY_ARC_STEPS)) / BATTERY_ARC_STEPS;
+
+    return MIN(step, BATTERY_ARC_STEPS);
 }
 
-static uint16_t battery_arc_start_angle(uint8_t index, uint8_t level) {
-    uint16_t degrees = battery_arc_level_degrees(level);
-
-    if (index == 1U) {
-        return battery_arc_zero_angles[index];
-    }
-
-    return (battery_arc_zero_angles[index] + 360U - degrees) % 360U;
+static uint16_t battery_arc_segment_degrees(void) {
+    return BATTERY_ARC_DEGREES / BATTERY_ARC_STEPS;
 }
 
-static uint16_t battery_arc_end_angle(uint8_t index, uint8_t level) {
-    uint16_t end_angle = battery_arc_zero_angles[index] + battery_arc_level_degrees(level);
+static uint16_t battery_arc_wrap_angle(uint16_t angle) {
+    return angle >= 360U ? angle - 360U : angle;
+}
 
+static uint16_t battery_arc_segment_start_angle(uint8_t index, uint8_t segment) {
     if (index == 0U) {
-        return battery_arc_zero_angles[index];
+        return (battery_arc_zero_angles[index] + 360U -
+                (uint16_t)(segment + 1U) * battery_arc_segment_degrees()) %
+               360U;
     }
 
-    return end_angle >= 360U ? end_angle - 360U : end_angle;
+    return battery_arc_wrap_angle(battery_arc_zero_angles[index] +
+                                  (uint16_t)segment * battery_arc_segment_degrees());
+}
+
+static uint16_t battery_arc_segment_end_angle(uint8_t index, uint8_t segment) {
+    if (index == 0U) {
+        return (battery_arc_zero_angles[index] + 360U -
+                (uint16_t)segment * battery_arc_segment_degrees()) %
+               360U;
+    }
+
+    return battery_arc_wrap_angle(battery_arc_zero_angles[index] +
+                                  (uint16_t)(segment + 1U) * battery_arc_segment_degrees());
 }
 
 static void set_battery_arc_level(uint8_t index, uint8_t level) {
@@ -109,13 +120,16 @@ static void set_battery_arc_level(uint8_t index, uint8_t level) {
 
     battery_arc_levels[index] = level;
 
-    if (battery_arcs[index] == NULL) {
-        return;
-    }
+    for (uint8_t segment = 0; segment < BATTERY_ARC_STEPS; segment++) {
+        if (battery_arcs[index][segment] == NULL) {
+            continue;
+        }
 
-    lv_obj_set_style_arc_opa(battery_arcs[index], LV_OPA_COVER, LV_PART_INDICATOR);
-    lv_arc_set_angles(battery_arcs[index], battery_arc_start_angle(index, level),
-                      battery_arc_end_angle(index, level));
+        lv_obj_set_style_arc_opa(battery_arcs[index][segment],
+                                 segment < battery_arc_level_step(level) ? LV_OPA_COVER
+                                                                         : LV_OPA_TRANSP,
+                                 LV_PART_INDICATOR);
+    }
 }
 
 #if IS_ENABLED(CONFIG_ZMK_BLE)
@@ -343,7 +357,7 @@ static lv_obj_t *create_outer_arc(lv_obj_t *screen, uint16_t start_angle, uint16
     lv_arc_set_angles(arc, start_angle, end_angle);
     lv_obj_set_style_arc_width(arc, BATTERY_ARC_WIDTH, LV_PART_INDICATOR);
     lv_obj_set_style_arc_color(arc, lv_color_hex(0xffffff), LV_PART_INDICATOR);
-    lv_obj_set_style_arc_opa(arc, LV_OPA_COVER, LV_PART_INDICATOR);
+    lv_obj_set_style_arc_opa(arc, LV_OPA_TRANSP, LV_PART_INDICATOR);
     lv_obj_set_style_bg_opa(arc, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_set_style_arc_opa(arc, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_set_style_opa(arc, LV_OPA_TRANSP, LV_PART_KNOB);
@@ -414,10 +428,14 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
     create_separator(screen, 140, 120, 71, 1);
     create_separator(screen, 120, 30, 1, 71);
     create_separator(screen, 120, 140, 1, 71);
-    battery_arcs[0] = create_outer_arc(screen, battery_arc_zero_angles[0],
-                                       battery_arc_zero_angles[0], 4);
-    battery_arcs[1] = create_outer_arc(screen, battery_arc_zero_angles[1],
-                                       battery_arc_zero_angles[1], -4);
+    for (uint8_t segment = 0; segment < BATTERY_ARC_STEPS; segment++) {
+        battery_arcs[0][segment] =
+            create_outer_arc(screen, battery_arc_segment_start_angle(0, segment),
+                             battery_arc_segment_end_angle(0, segment), 4);
+        battery_arcs[1][segment] =
+            create_outer_arc(screen, battery_arc_segment_start_angle(1, segment),
+                             battery_arc_segment_end_angle(1, segment), -4);
+    }
     init_battery_arc_listener();
 
     for (uint8_t index = 0; index < BATTERY_ARC_COUNT; index++) {
@@ -427,13 +445,13 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
     }
 
     position_labels[0] =
-        create_rotated_number(screen, "1", 80, 80, 0, &position_shadow_labels[0]);
+        create_rotated_number(screen, "1", 100, 100, 0, &position_shadow_labels[0]);
     position_labels[1] =
-        create_rotated_number(screen, "2", 160, 80, 0, &position_shadow_labels[1]);
+        create_rotated_number(screen, "2", 140, 100, 0, &position_shadow_labels[1]);
     position_labels[2] =
-        create_rotated_number(screen, "3", 160, 160, 0, &position_shadow_labels[2]);
+        create_rotated_number(screen, "3", 140, 140, 0, &position_shadow_labels[2]);
     position_labels[3] =
-        create_rotated_number(screen, "4", 80, 160, 0, &position_shadow_labels[3]);
+        create_rotated_number(screen, "4", 100, 140, 0, &position_shadow_labels[3]);
     update_position_labels();
 }
 
