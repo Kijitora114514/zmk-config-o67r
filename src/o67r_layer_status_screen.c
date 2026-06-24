@@ -27,9 +27,10 @@
 #define SWIPE_THRESHOLD 30
 #define TOUCH_POLL_MS 20
 #define TAP_RELEASE_MS 20
-#define BATTERY_ARC_DEGREES 45
+#define BATTERY_ARC_DEGREES 120
 #define BATTERY_ARC_COUNT 2
 #define BATTERY_ARC_STEPS 10
+#define BATTERY_ARC_WIDTH 10
 #define BATTERY_ARC_UNKNOWN UINT8_MAX
 /* 0x808080 pre-corrected for the display's RGB565 byte order. */
 // #define DISPLAY_GRAY_HEX 0x101021
@@ -60,7 +61,7 @@ struct battery_arc_state {
 static lv_obj_t *battery_arcs[BATTERY_ARC_COUNT];
 static uint8_t battery_arc_levels[BATTERY_ARC_COUNT] = {BATTERY_ARC_UNKNOWN,
                                                         BATTERY_ARC_UNKNOWN};
-static const uint16_t battery_arc_start_angles[BATTERY_ARC_COUNT] = {158, 338};
+static const uint16_t battery_arc_start_angles[BATTERY_ARC_COUNT] = {120, 300};
 
 static void set_display_brightness(void) {
     if (!pwm_is_ready_dt(&display_backlight)) {
@@ -324,7 +325,7 @@ static lv_obj_t *create_outer_arc(lv_obj_t *screen, uint16_t start_angle, uint16
     lv_obj_set_size(arc, SCREEN_SIZE, SCREEN_SIZE);
     lv_obj_align(arc, LV_ALIGN_CENTER, x_offset, 0);
     lv_arc_set_angles(arc, start_angle, end_angle);
-    lv_obj_set_style_arc_width(arc, 5, LV_PART_INDICATOR);
+    lv_obj_set_style_arc_width(arc, BATTERY_ARC_WIDTH, LV_PART_INDICATOR);
     lv_obj_set_style_arc_color(arc, lv_color_hex(0xffffff), LV_PART_INDICATOR);
     lv_obj_set_style_arc_opa(arc, LV_OPA_COVER, LV_PART_INDICATOR);
     lv_obj_set_style_bg_opa(arc, LV_OPA_TRANSP, LV_PART_MAIN);
@@ -393,10 +394,10 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
     //create_separator(screen, 140, 120, 81, 2);
     //create_separator(screen, 120, 20, 2, 81);
     //create_separator(screen, 120, 140, 2, 81);
-    create_separator(screen, 20, 120, 81, 1);
-    create_separator(screen, 140, 120, 81, 1);
-    create_separator(screen, 120, 20, 1, 81);
-    create_separator(screen, 120, 140, 1, 81);
+    create_separator(screen, 30, 120, 71, 1);
+    create_separator(screen, 140, 120, 71, 1);
+    create_separator(screen, 120, 30, 1, 71);
+    create_separator(screen, 120, 140, 1, 71);
     battery_arcs[0] = create_outer_arc(screen, battery_arc_start_angles[0],
                                        battery_arc_start_angles[0], 2);
     battery_arcs[1] = create_outer_arc(screen, battery_arc_start_angles[1],
