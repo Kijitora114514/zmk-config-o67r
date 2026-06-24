@@ -6,11 +6,16 @@
 
 #include <lvgl.h>
 
+#include <stdint.h>
+
 #include <zephyr/device.h>
 #include <zephyr/drivers/i2c.h>
 #include <zephyr/drivers/pwm.h>
 
+#include <zmk/display.h>
 #include <zmk/display/status_screen.h>
+#include <zmk/events/battery_state_changed.h>
+#include <zmk/event_manager.h>
 #include <zmk/keymap.h>
 
 #define SCREEN_SIZE 240
@@ -20,6 +25,9 @@
 #define TOUCH_POLL_MS 20
 #define TAP_RELEASE_MS 20
 #define IMAGE_DATA_SIZE (SCREEN_SIZE * SCREEN_SIZE * 2)
+#define BATTERY_ARC_DEGREES 45
+#define BATTERY_ARC_COUNT 2
+#define BATTERY_ARC_UNKNOWN UINT8_MAX
 /* 0x808080 pre-corrected for the display's RGB565 byte order. */
 // #define DISPLAY_GRAY_HEX 0x101021
 
@@ -43,6 +51,16 @@ static const struct pwm_dt_spec display_backlight = PWM_DT_SPEC_GET(DISPLAY_BACK
 
 static LV_ATTRIBUTE_MEM_ALIGN uint8_t swapped_image_data[IMAGE_DATA_SIZE];
 static lv_image_dsc_t swapped_image;
+
+struct battery_arc_state {
+    uint8_t source;
+    uint8_t level;
+};
+
+static lv_obj_t *battery_arcs[BATTERY_ARC_COUNT];
+static uint8_t battery_arc_levels[BATTERY_ARC_COUNT] = {BATTERY_ARC_UNKNOWN,
+                                                        BATTERY_ARC_UNKNOWN};
+static const uint16_t battery_arc_start_angles[BATTERY_ARC_COUNT] = {158, 338};
 
 static void set_display_brightness(void) {
     if (!pwm_is_ready_dt(&display_backlight)) {
@@ -71,6 +89,63 @@ static const lv_image_dsc_t *get_byte_swapped_image(void) {
 
     return &swapped_image;
 }
+
+static uint16_t battery_arc_end_angle(uint8_t index, uint8_t level) {
+    uint16_t end_angle = battery_arc_start_angles[index] +
+                         ((uint16_t)BATTERY_ARC_DEGREES * level) / 100U;
+
+    return end_angle >= 360U ? end_angle - 360U : end_angle;
+}
+
+static void set_battery_arc_level(uint8_t index, uint8_t level) {
+    if (index >= BATTERY_ARC_COUNT) {
+        return;
+    }
+
+    if (level > 100U) {
+        level = 100U;
+    }
+
+    battery_arc_levels[index] = level;
+
+    if (battery_arcs[index] == NULL) {
+        return;
+    }
+
+    lv_obj_set_style_arc_opa(battery_arcs[index], level == 0U ? LV_OPA_TRANSP : LV_OPA_COVER,
+                             LV_PART_INDICATOR);
+    lv_arc_set_angles(battery_arcs[index], battery_arc_start_angles[index],
+                      battery_arc_end_angle(index, level));
+}
+
+static void battery_arc_update_cb(struct battery_arc_state state) {
+    if (state.source >= BATTERY_ARC_COUNT) {
+        return;
+    }
+
+    set_battery_arc_level(state.source, state.level);
+}
+
+static struct battery_arc_state battery_arc_get_state(const zmk_event_t *eh) {
+    if (eh == NULL) {
+        return (struct battery_arc_state){
+            .source = BATTERY_ARC_COUNT,
+            .level = 0,
+        };
+    }
+
+    const struct zmk_peripheral_battery_state_changed *event =
+        as_zmk_peripheral_battery_state_changed(eh);
+
+    return (struct battery_arc_state){
+        .source = event->source,
+        .level = event->state_of_charge,
+    };
+}
+
+ZMK_DISPLAY_WIDGET_LISTENER(o67r_battery_arc, struct battery_arc_state, battery_arc_update_cb,
+                            battery_arc_get_state);
+ZMK_SUBSCRIPTION(o67r_battery_arc, zmk_peripheral_battery_state_changed);
 
 #define CST816S_NODE DT_NODELABEL(cst816s)
 
@@ -253,8 +328,8 @@ static void create_separator(lv_obj_t *screen, lv_coord_t x, lv_coord_t y, lv_co
     lv_obj_clear_flag(separator, LV_OBJ_FLAG_SCROLLABLE);
 }
 
-static void create_outer_arc(lv_obj_t *screen, uint16_t start_angle, uint16_t end_angle,
-                             lv_coord_t x_offset) {
+static lv_obj_t *create_outer_arc(lv_obj_t *screen, uint16_t start_angle, uint16_t end_angle,
+                                  lv_coord_t x_offset) {
     lv_obj_t *arc = lv_arc_create(screen);
     lv_obj_remove_style_all(arc);
     lv_obj_set_size(arc, SCREEN_SIZE, SCREEN_SIZE);
@@ -262,12 +337,14 @@ static void create_outer_arc(lv_obj_t *screen, uint16_t start_angle, uint16_t en
     lv_arc_set_angles(arc, start_angle, end_angle);
     lv_obj_set_style_arc_width(arc, 5, LV_PART_INDICATOR);
     lv_obj_set_style_arc_color(arc, lv_color_hex(0xffffff), LV_PART_INDICATOR);
-    lv_obj_set_style_arc_opa(arc, LV_OPA_COVER, LV_PART_INDICATOR);
+    lv_obj_set_style_arc_opa(arc, LV_OPA_TRANSP, LV_PART_INDICATOR);
     lv_obj_set_style_bg_opa(arc, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_set_style_arc_opa(arc, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_set_style_opa(arc, LV_OPA_TRANSP, LV_PART_KNOB);
     lv_obj_clear_flag(arc, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_clear_flag(arc, LV_OBJ_FLAG_SCROLLABLE);
+
+    return arc;
 }
 
 static lv_obj_t *create_rotated_number(lv_obj_t *screen, const char *text, lv_coord_t x,
@@ -331,8 +408,17 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
     create_separator(screen, 140, 120, 81, 1);
     create_separator(screen, 120, 20, 1, 81);
     create_separator(screen, 120, 140, 1, 81);
-    create_outer_arc(screen, 338, 23, -2);
-    create_outer_arc(screen, 158, 203, 2);
+    battery_arcs[0] = create_outer_arc(screen, battery_arc_start_angles[0],
+                                       battery_arc_start_angles[0], 2);
+    battery_arcs[1] = create_outer_arc(screen, battery_arc_start_angles[1],
+                                       battery_arc_start_angles[1], -2);
+    o67r_battery_arc_init();
+
+    for (uint8_t index = 0; index < BATTERY_ARC_COUNT; index++) {
+        if (battery_arc_levels[index] != BATTERY_ARC_UNKNOWN) {
+            set_battery_arc_level(index, battery_arc_levels[index]);
+        }
+    }
 
     position_labels[0] =
         create_rotated_number(screen, "1", 60, 60, 0, &position_shadow_labels[0]);
