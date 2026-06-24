@@ -13,6 +13,12 @@
 //#include <dt-bindings/zmk/studio.h>
 //&studio_unlockに昔は必要だった？
 
+#ifdef CONFIG_ZMK_STUDIO
+#define O67R_STUDIO_UNLOCK &studio_unlock
+#else
+#define O67R_STUDIO_UNLOCK &none
+#endif
+
 / {
     keymap {
         compatible = "zmk,keymap";
@@ -20,12 +26,12 @@
         default_layer {
             display-name = "Base";
             bindings = <
-                &studio_unlock       &kp A  &kp B  &kp C  &kp D        &kp E  &kp F  &kp G  &kp H          &kp I  &kp J  &kp K  &kp L     &kp PG_UP  &kp PG_DN  &kp M  &kp N  &kp O  &kp P 
+                O67R_STUDIO_UNLOCK       &kp A  &kp B  &kp C  &kp D        &kp E  &kp F  &kp G  &kp H          &kp I  &kp J  &kp K  &kp L     &kp PG_UP  &kp PG_DN  &kp M  &kp N  &kp O  &kp P
                 &kp ESC    &kp N1    &kp N2    &kp N3  &kp N4  &kp N5  &bt BT_CLR    &kp N6     &kp N7     &kp N8   &kp N9     &kp N0     &kp EQUAL  &kp BSPC
                 &kp GRAVE  &kp Q     &kp W     &kp E   &kp R   &kp T   &bt BT_NXT    &kp Y      &kp U      &kp I    &kp O      &kp MINUS  &kp P      &kp BSLH
                 &kp TAB    &kp A     &kp S     &kp D   &kp F   &kp G   &kp SQT       &kp DEL    &kp H      &kp J    &kp K      &kp L      &kp SEMI   &kp ENTER
                 &kp LSHFT  &kp Z     &kp X     &kp C   &kp V   &kp B   &kp LBKT      &kp RBKT   &kp N      &kp M    &kp COMMA  &kp DOT    &kp SLASH  &kp RSHFT
-                &kp LCTRL  &kp LWIN  &kp LALT  &studio_unlock  &mo 1   &kp LANG2     &kp SPACE  &kp SPACE  &kp LANG1  &mo 1    &kp LEFT   &kp UP     &kp DOWN   &kp RIGHT
+                &kp LCTRL  &kp LWIN  &kp LALT  O67R_STUDIO_UNLOCK  &mo 1   &kp LANG2     &kp SPACE  &kp SPACE  &kp LANG1  &mo 1    &kp LEFT   &kp UP     &kp DOWN   &kp RIGHT
             >;
             sensor-bindings =
                 <&inc_dec_kp Q W>,
@@ -40,7 +46,7 @@
                 &kp GRAVE  &kp Q     &kp W     &kp E   &kp R   &kp T   &trans     &kp Y      &kp U      &kp I    &kp O      &kp MINUS  &kp P      &kp BSLH
                 &kp TAB    &kp A     &kp S     &kp D   &kp F   &kp G   &kp SQT    &kp DEL    &kp H      &kp J    &kp K      &kp L      &kp SEMI   &kp KP_ENTER
                 &kp LSHFT  &kp Z     &kp X     &kp C   &kp V   &kp B   &kp LBKT   &kp RBKT   &kp N      &kp M    &kp COMMA  &kp DOT    &kp SLASH  &kp RSHFT
-                &kp LCTRL  &kp LWIN  &kp LALT  &studio_unlock  &trans  &kp LANG2  &kp SPACE  &kp SPACE  &kp LANG1  &trans   &kp HOME   &kp PG_UP  &kp PG_DN  &kp END
+                &kp LCTRL  &kp LWIN  &kp LALT  O67R_STUDIO_UNLOCK  &trans  &kp LANG2  &kp SPACE  &kp SPACE  &kp LANG1  &trans   &kp HOME   &kp PG_UP  &kp PG_DN  &kp END
             >;
             sensor-bindings =
                 <&inc_dec_kp Q W>,
@@ -187,9 +193,11 @@
     };
 };
 
+#ifdef CONFIG_INPUT_CST816S
 &touch_listener {
     input-processors = <
         &zip_absolute_to_relative
         &zip_mouse_gesture
     >;
 };
+#endif

@@ -26,7 +26,8 @@ manifest:
     - name: zmk-component-raytac-dongle
       remote: rschenk
 #      revision: v0.3
-      revision: v0.4 # 4.x
+#      revision: v0.4 # 4.x
+      revision: main # 4.x
 
     # GC9A01A
     - name: gc9a01a_zephyr_driver
