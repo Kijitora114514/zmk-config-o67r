@@ -61,7 +61,7 @@ struct battery_arc_state {
 static lv_obj_t *battery_arcs[BATTERY_ARC_COUNT];
 static uint8_t battery_arc_levels[BATTERY_ARC_COUNT] = {BATTERY_ARC_UNKNOWN,
                                                         BATTERY_ARC_UNKNOWN};
-static const uint16_t battery_arc_start_angles[BATTERY_ARC_COUNT] = {120, 300};
+static const uint16_t battery_arc_zero_angles[BATTERY_ARC_COUNT] = {120, 60};
 
 static void set_display_brightness(void) {
     if (!pwm_is_ready_dt(&display_backlight)) {
@@ -73,11 +73,27 @@ static void set_display_brightness(void) {
     pwm_set_pulse_dt(&display_backlight, pulse);
 }
 
-static uint16_t battery_arc_end_angle(uint8_t index, uint8_t level) {
+static uint16_t battery_arc_level_degrees(uint8_t level) {
     uint8_t step = (level + (100U / BATTERY_ARC_STEPS) - 1U) / (100U / BATTERY_ARC_STEPS);
-    uint16_t end_angle =
-        battery_arc_start_angles[index] +
-        ((uint16_t)BATTERY_ARC_DEGREES * MIN(step, BATTERY_ARC_STEPS)) / BATTERY_ARC_STEPS;
+    return ((uint16_t)BATTERY_ARC_DEGREES * MIN(step, BATTERY_ARC_STEPS)) / BATTERY_ARC_STEPS;
+}
+
+static uint16_t battery_arc_start_angle(uint8_t index, uint8_t level) {
+    uint16_t degrees = battery_arc_level_degrees(level);
+
+    if (index == 1U) {
+        return (battery_arc_zero_angles[index] + 360U - degrees) % 360U;
+    }
+
+    return battery_arc_zero_angles[index];
+}
+
+static uint16_t battery_arc_end_angle(uint8_t index, uint8_t level) {
+    uint16_t end_angle = battery_arc_zero_angles[index] + battery_arc_level_degrees(level);
+
+    if (index == 1U) {
+        return battery_arc_zero_angles[index];
+    }
 
     return end_angle >= 360U ? end_angle - 360U : end_angle;
 }
@@ -98,7 +114,7 @@ static void set_battery_arc_level(uint8_t index, uint8_t level) {
     }
 
     lv_obj_set_style_arc_opa(battery_arcs[index], LV_OPA_COVER, LV_PART_INDICATOR);
-    lv_arc_set_angles(battery_arcs[index], battery_arc_start_angles[index],
+    lv_arc_set_angles(battery_arcs[index], battery_arc_start_angle(index, level),
                       battery_arc_end_angle(index, level));
 }
 
@@ -398,10 +414,10 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
     create_separator(screen, 140, 120, 71, 1);
     create_separator(screen, 120, 30, 1, 71);
     create_separator(screen, 120, 140, 1, 71);
-    battery_arcs[0] = create_outer_arc(screen, battery_arc_start_angles[0],
-                                       battery_arc_start_angles[0], 4);
-    battery_arcs[1] = create_outer_arc(screen, battery_arc_start_angles[1],
-                                       battery_arc_start_angles[1], -4);
+    battery_arcs[0] = create_outer_arc(screen, battery_arc_zero_angles[0],
+                                       battery_arc_zero_angles[0], 4);
+    battery_arcs[1] = create_outer_arc(screen, battery_arc_zero_angles[1],
+                                       battery_arc_zero_angles[1], -4);
     init_battery_arc_listener();
 
     for (uint8_t index = 0; index < BATTERY_ARC_COUNT; index++) {
@@ -411,13 +427,13 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
     }
 
     position_labels[0] =
-        create_rotated_number(screen, "1", 60, 60, 0, &position_shadow_labels[0]);
+        create_rotated_number(screen, "1", 80, 80, 0, &position_shadow_labels[0]);
     position_labels[1] =
-        create_rotated_number(screen, "2", 180, 60, 0, &position_shadow_labels[1]);
+        create_rotated_number(screen, "2", 160, 80, 0, &position_shadow_labels[1]);
     position_labels[2] =
-        create_rotated_number(screen, "3", 180, 180, 0, &position_shadow_labels[2]);
+        create_rotated_number(screen, "3", 160, 160, 0, &position_shadow_labels[2]);
     position_labels[3] =
-        create_rotated_number(screen, "4", 60, 180, 0, &position_shadow_labels[3]);
+        create_rotated_number(screen, "4", 80, 160, 0, &position_shadow_labels[3]);
     update_position_labels();
 }
 
