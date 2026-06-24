@@ -6,7 +6,7 @@
 
 &default_transform {
     // Set this to the number of columns on the left side.
-    row-offset = <2>;
+    row-offset = <1>;
 };
 
 
