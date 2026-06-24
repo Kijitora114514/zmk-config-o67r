@@ -14,12 +14,12 @@ include:
 #    cmake-args: -DCONFIG_ZMK_STUDIO=y
 
 
-#  - board: mdbt50q_rx
-#    shield: o67r_left
-#    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
-#  - board: mdbt50q_rx
-#    shield: o67r_right
-#    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
+  - board: mdbt50q_rx
+    shield: o67r_left
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
+  - board: mdbt50q_rx
+    shield: o67r_right
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
   - board: xiao_ble//zmk
     shield: settings_reset
     artifact-name: settings_reset-xiao_ble_zmk
