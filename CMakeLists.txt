@@ -2,6 +2,7 @@ if(CONFIG_ZMK_DISPLAY_STATUS_SCREEN_CUSTOM)
   find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
   set(O67R_SWAPPED_DISP_C ${CMAKE_CURRENT_BINARY_DIR}/o67r_disp_swapped.c)
+  set_source_files_properties(${O67R_SWAPPED_DISP_C} PROPERTIES GENERATED TRUE)
 
   add_custom_command(
     OUTPUT ${O67R_SWAPPED_DISP_C}
