@@ -61,7 +61,7 @@ struct battery_arc_state {
 static lv_obj_t *battery_arcs[BATTERY_ARC_COUNT];
 static uint8_t battery_arc_levels[BATTERY_ARC_COUNT] = {BATTERY_ARC_UNKNOWN,
                                                         BATTERY_ARC_UNKNOWN};
-static const uint16_t battery_arc_zero_angles[BATTERY_ARC_COUNT] = {120, 60};
+static const uint16_t battery_arc_zero_angles[BATTERY_ARC_COUNT] = {240, 300};
 
 static void set_display_brightness(void) {
     if (!pwm_is_ready_dt(&display_backlight)) {
@@ -82,16 +82,16 @@ static uint16_t battery_arc_start_angle(uint8_t index, uint8_t level) {
     uint16_t degrees = battery_arc_level_degrees(level);
 
     if (index == 1U) {
-        return (battery_arc_zero_angles[index] + 360U - degrees) % 360U;
+        return battery_arc_zero_angles[index];
     }
 
-    return battery_arc_zero_angles[index];
+    return (battery_arc_zero_angles[index] + 360U - degrees) % 360U;
 }
 
 static uint16_t battery_arc_end_angle(uint8_t index, uint8_t level) {
     uint16_t end_angle = battery_arc_zero_angles[index] + battery_arc_level_degrees(level);
 
-    if (index == 1U) {
+    if (index == 0U) {
         return battery_arc_zero_angles[index];
     }
 
