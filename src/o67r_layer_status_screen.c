@@ -30,7 +30,7 @@
 #define BATTERY_ARC_DEGREES 120
 #define BATTERY_ARC_COUNT 2
 #define BATTERY_ARC_STEPS 10
-#define BATTERY_ARC_WIDTH 10
+#define BATTERY_ARC_WIDTH 8
 #define BATTERY_ARC_UNKNOWN UINT8_MAX
 /* 0x808080 pre-corrected for the display's RGB565 byte order. */
 // #define DISPLAY_GRAY_HEX 0x101021
@@ -399,9 +399,9 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
     create_separator(screen, 120, 30, 1, 71);
     create_separator(screen, 120, 140, 1, 71);
     battery_arcs[0] = create_outer_arc(screen, battery_arc_start_angles[0],
-                                       battery_arc_start_angles[0], 2);
+                                       battery_arc_start_angles[0], 4);
     battery_arcs[1] = create_outer_arc(screen, battery_arc_start_angles[1],
-                                       battery_arc_start_angles[1], -2);
+                                       battery_arc_start_angles[1], -4);
     init_battery_arc_listener();
 
     for (uint8_t index = 0; index < BATTERY_ARC_COUNT; index++) {
