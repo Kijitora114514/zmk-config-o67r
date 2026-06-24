@@ -27,7 +27,6 @@
 #define SWIPE_THRESHOLD 30
 #define TOUCH_POLL_MS 20
 #define TAP_RELEASE_MS 20
-#define IMAGE_DATA_SIZE (SCREEN_SIZE * SCREEN_SIZE * 2)
 #define BATTERY_ARC_DEGREES 45
 #define BATTERY_ARC_COUNT 2
 #define BATTERY_ARC_UNKNOWN UINT8_MAX
@@ -52,9 +51,6 @@ extern const lv_image_dsc_t disp;
 
 static const struct pwm_dt_spec display_backlight = PWM_DT_SPEC_GET(DISPLAY_BACKLIGHT_NODE);
 
-static LV_ATTRIBUTE_MEM_ALIGN uint8_t swapped_image_data[IMAGE_DATA_SIZE];
-static lv_image_dsc_t swapped_image;
-
 struct battery_arc_state {
     uint8_t source;
     uint8_t level;
@@ -73,24 +69,6 @@ static void set_display_brightness(void) {
     uint32_t pulse =
         ((uint64_t)display_backlight.period * CONFIG_O67R_DISPLAY_BRIGHTNESS) / 100U;
     pwm_set_pulse_dt(&display_backlight, pulse);
-}
-
-static const lv_image_dsc_t *get_byte_swapped_image(void) {
-    const uint8_t *rgb_data = disp.data;
-
-    if (disp.header.cf != LV_COLOR_FORMAT_RGB565 || disp.data_size > sizeof(swapped_image_data)) {
-        return &disp;
-    }
-
-    for (uint32_t index = 0; index + 1 < disp.data_size; index += 2) {
-        swapped_image_data[index] = rgb_data[index + 1];
-        swapped_image_data[index + 1] = rgb_data[index];
-    }
-
-    swapped_image = disp;
-    swapped_image.data = swapped_image_data;
-
-    return &swapped_image;
 }
 
 static uint16_t battery_arc_end_angle(uint8_t index, uint8_t level) {
@@ -469,7 +447,7 @@ lv_obj_t *zmk_display_status_screen(void) {
     lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, LV_PART_MAIN);
 
     lv_obj_t *image = lv_image_create(screen);
-    lv_image_set_src(image, get_byte_swapped_image());
+    lv_image_set_src(image, &disp);
     lv_obj_center(image);
 
     init_swipe_status(screen);
