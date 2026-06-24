@@ -388,8 +388,8 @@ static lv_obj_t *create_rotated_number(lv_obj_t *screen, const char *text, lv_co
 }
 
 static void update_position_labels(void) {
-    static const lv_coord_t label_x[] = {60, 180, 180, 60};
-    static const lv_coord_t label_y[] = {60, 60, 180, 180};
+    static const lv_coord_t label_x[] = {80, 160, 160, 80};
+    static const lv_coord_t label_y[] = {80, 80, 160, 160};
 
     for (uint32_t index = 0; index < 4U; index++) {
         if (position_labels[index] == NULL) {
@@ -445,13 +445,13 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
     }
 
     position_labels[0] =
-        create_rotated_number(screen, "1", 100, 100, 0, &position_shadow_labels[0]);
+        create_rotated_number(screen, "1", 80, 80, 0, &position_shadow_labels[0]);
     position_labels[1] =
-        create_rotated_number(screen, "2", 140, 100, 0, &position_shadow_labels[1]);
+        create_rotated_number(screen, "2", 160, 80, 0, &position_shadow_labels[1]);
     position_labels[2] =
-        create_rotated_number(screen, "3", 140, 140, 0, &position_shadow_labels[2]);
+        create_rotated_number(screen, "3", 160, 160, 0, &position_shadow_labels[2]);
     position_labels[3] =
-        create_rotated_number(screen, "4", 100, 140, 0, &position_shadow_labels[3]);
+        create_rotated_number(screen, "4", 80, 160, 0, &position_shadow_labels[3]);
     update_position_labels();
 }
 
