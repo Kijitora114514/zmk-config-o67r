@@ -11,11 +11,14 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/i2c.h>
 #include <zephyr/drivers/pwm.h>
+#include <zephyr/sys/util.h>
 
 #include <zmk/display.h>
 #include <zmk/display/status_screen.h>
+#if IS_ENABLED(CONFIG_ZMK_BLE)
 #include <zmk/events/battery_state_changed.h>
 #include <zmk/event_manager.h>
+#endif
 #include <zmk/keymap.h>
 
 #define SCREEN_SIZE 240
@@ -118,6 +121,7 @@ static void set_battery_arc_level(uint8_t index, uint8_t level) {
                       battery_arc_end_angle(index, level));
 }
 
+#if IS_ENABLED(CONFIG_ZMK_BLE)
 static void battery_arc_update_cb(struct battery_arc_state state) {
     if (state.source >= BATTERY_ARC_COUNT) {
         return;
@@ -146,6 +150,11 @@ static struct battery_arc_state battery_arc_get_state(const zmk_event_t *eh) {
 ZMK_DISPLAY_WIDGET_LISTENER(o67r_battery_arc, struct battery_arc_state, battery_arc_update_cb,
                             battery_arc_get_state);
 ZMK_SUBSCRIPTION(o67r_battery_arc, zmk_peripheral_battery_state_changed);
+
+static void init_battery_arc_listener(void) { o67r_battery_arc_init(); }
+#else
+static void init_battery_arc_listener(void) {}
+#endif
 
 #define CST816S_NODE DT_NODELABEL(cst816s)
 
@@ -412,7 +421,7 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
                                        battery_arc_start_angles[0], 2);
     battery_arcs[1] = create_outer_arc(screen, battery_arc_start_angles[1],
                                        battery_arc_start_angles[1], -2);
-    o67r_battery_arc_init();
+    init_battery_arc_listener();
 
     for (uint8_t index = 0; index < BATTERY_ARC_COUNT; index++) {
         if (battery_arc_levels[index] != BATTERY_ARC_UNKNOWN) {
