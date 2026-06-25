@@ -29,8 +29,8 @@
 #define TAP_RELEASE_MS 20
 #define BATTERY_ARC_DEGREES 90
 #define BATTERY_ARC_COUNT 2
-#define BATTERY_ARC_OUTER_OFFSET 4
-#define BATTERY_ARC_OUTER_WIDTH 6
+#define BATTERY_ARC_OUTER_OFFSET 5
+#define BATTERY_ARC_OUTER_WIDTH 4
 #define BATTERY_ARC_INNER_OFFSET 5
 #define BATTERY_ARC_INNER_WIDTH 4
 #define BATTERY_ARC_UNKNOWN UINT8_MAX
@@ -345,12 +345,13 @@ static void create_separator(lv_obj_t *screen, lv_coord_t x, lv_coord_t y, lv_co
 }
 
 static lv_obj_t *create_battery_arc(lv_obj_t *screen, uint16_t start_angle, uint16_t end_angle,
-                                    lv_coord_t x_offset, lv_coord_t outer_offset,
-                                    lv_coord_t width, lv_color_t color) {
+                                    lv_coord_t x_offset, lv_coord_t y_offset,
+                                    lv_coord_t outer_offset, lv_coord_t width,
+                                    lv_color_t color) {
     lv_obj_t *arc = lv_arc_create(screen);
     lv_obj_remove_style_all(arc);
     lv_obj_set_size(arc, SCREEN_SIZE - (outer_offset * 2), SCREEN_SIZE - (outer_offset * 2));
-    lv_obj_align(arc, LV_ALIGN_CENTER, x_offset, 0);
+    lv_obj_align(arc, LV_ALIGN_CENTER, x_offset, y_offset);
     lv_arc_set_angles(arc, start_angle, end_angle);
     lv_obj_set_style_arc_width(arc, width, LV_PART_INDICATOR);
     lv_obj_set_style_arc_color(arc, color, LV_PART_INDICATOR);
@@ -427,20 +428,20 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
     create_separator(screen, 120, 150, 1, 61);
 
     battery_outer_arcs[0] =
-        create_battery_arc(screen, battery_arc_start_angle(0, 0), battery_arc_end_angle(0, 0), 4,
-                           BATTERY_ARC_OUTER_OFFSET, BATTERY_ARC_OUTER_WIDTH,
+        create_battery_arc(screen, battery_arc_start_angle(0, 0), battery_arc_end_angle(0, 0), 5,
+                           1, BATTERY_ARC_OUTER_OFFSET, BATTERY_ARC_OUTER_WIDTH,
                            lv_color_hex(0x000000));
     battery_outer_arcs[1] =
-        create_battery_arc(screen, battery_arc_start_angle(1, 0), battery_arc_end_angle(1, 0), -4,
-                           BATTERY_ARC_OUTER_OFFSET, BATTERY_ARC_OUTER_WIDTH,
+        create_battery_arc(screen, battery_arc_start_angle(1, 0), battery_arc_end_angle(1, 0), -3,
+                           1, BATTERY_ARC_OUTER_OFFSET, BATTERY_ARC_OUTER_WIDTH,
                            lv_color_hex(0x000000));
     battery_inner_arcs[0] =
         create_battery_arc(screen, battery_arc_start_angle(0, 0), battery_arc_end_angle(0, 0), 4,
-                           BATTERY_ARC_INNER_OFFSET, BATTERY_ARC_INNER_WIDTH,
+                           0, BATTERY_ARC_INNER_OFFSET, BATTERY_ARC_INNER_WIDTH,
                            lv_color_hex(0xffffff));
     battery_inner_arcs[1] =
         create_battery_arc(screen, battery_arc_start_angle(1, 0), battery_arc_end_angle(1, 0), -4,
-                           BATTERY_ARC_INNER_OFFSET, BATTERY_ARC_INNER_WIDTH,
+                           0, BATTERY_ARC_INNER_OFFSET, BATTERY_ARC_INNER_WIDTH,
                            lv_color_hex(0xffffff));
     init_battery_arc_listener();
 
