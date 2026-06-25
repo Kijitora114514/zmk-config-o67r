@@ -27,10 +27,12 @@
 #define SWIPE_THRESHOLD 30
 #define TOUCH_POLL_MS 20
 #define TAP_RELEASE_MS 20
-#define BATTERY_ARC_DEGREES 120
+#define BATTERY_ARC_DEGREES 90
 #define BATTERY_ARC_COUNT 2
-#define BATTERY_ARC_STEPS 10
-#define BATTERY_ARC_WIDTH 8
+#define BATTERY_ARC_OUTER_OFFSET 4
+#define BATTERY_ARC_OUTER_WIDTH 6
+#define BATTERY_ARC_INNER_OFFSET 5
+#define BATTERY_ARC_INNER_WIDTH 4
 #define BATTERY_ARC_UNKNOWN UINT8_MAX
 /* 0x808080 pre-corrected for the display's RGB565 byte order. */
 // #define DISPLAY_GRAY_HEX 0x101021
@@ -58,10 +60,11 @@ struct battery_arc_state {
     uint8_t level;
 };
 
-static lv_obj_t *battery_arcs[BATTERY_ARC_COUNT][BATTERY_ARC_STEPS];
+static lv_obj_t *battery_outer_arcs[BATTERY_ARC_COUNT];
+static lv_obj_t *battery_inner_arcs[BATTERY_ARC_COUNT];
 static uint8_t battery_arc_levels[BATTERY_ARC_COUNT] = {BATTERY_ARC_UNKNOWN,
                                                         BATTERY_ARC_UNKNOWN};
-static const uint16_t battery_arc_zero_angles[BATTERY_ARC_COUNT] = {240, 300};
+static const uint16_t battery_arc_zero_angles[BATTERY_ARC_COUNT] = {225, 315};
 
 static void set_display_brightness(void) {
     if (!pwm_is_ready_dt(&display_backlight)) {
@@ -73,40 +76,32 @@ static void set_display_brightness(void) {
     pwm_set_pulse_dt(&display_backlight, pulse);
 }
 
-static uint8_t battery_arc_level_step(uint8_t level) {
-    uint8_t step = (level + (100U / BATTERY_ARC_STEPS) - 1U) / (100U / BATTERY_ARC_STEPS);
-
-    return MIN(step, BATTERY_ARC_STEPS);
-}
-
-static uint16_t battery_arc_segment_degrees(void) {
-    return BATTERY_ARC_DEGREES / BATTERY_ARC_STEPS;
-}
-
 static uint16_t battery_arc_wrap_angle(uint16_t angle) {
     return angle >= 360U ? angle - 360U : angle;
 }
 
-static uint16_t battery_arc_segment_start_angle(uint8_t index, uint8_t segment) {
-    if (index == 0U) {
-        return (battery_arc_zero_angles[index] + 360U -
-                (uint16_t)(segment + 1U) * battery_arc_segment_degrees()) %
-               360U;
-    }
-
-    return battery_arc_wrap_angle(battery_arc_zero_angles[index] +
-                                  (uint16_t)segment * battery_arc_segment_degrees());
+static uint16_t battery_arc_level_degrees(uint8_t level) {
+    return ((uint32_t)BATTERY_ARC_DEGREES * level) / 100U;
 }
 
-static uint16_t battery_arc_segment_end_angle(uint8_t index, uint8_t segment) {
+static uint16_t battery_arc_start_angle(uint8_t index, uint8_t level) {
+    uint16_t degrees = battery_arc_level_degrees(level);
+
     if (index == 0U) {
-        return (battery_arc_zero_angles[index] + 360U -
-                (uint16_t)segment * battery_arc_segment_degrees()) %
-               360U;
+        return (battery_arc_zero_angles[index] + 360U - degrees) % 360U;
     }
 
-    return battery_arc_wrap_angle(battery_arc_zero_angles[index] +
-                                  (uint16_t)(segment + 1U) * battery_arc_segment_degrees());
+    return battery_arc_zero_angles[index];
+}
+
+static uint16_t battery_arc_end_angle(uint8_t index, uint8_t level) {
+    uint16_t degrees = battery_arc_level_degrees(level);
+
+    if (index == 0U) {
+        return battery_arc_zero_angles[index];
+    }
+
+    return battery_arc_wrap_angle(battery_arc_zero_angles[index] + degrees);
 }
 
 static void set_battery_arc_level(uint8_t index, uint8_t level) {
@@ -119,16 +114,17 @@ static void set_battery_arc_level(uint8_t index, uint8_t level) {
     }
 
     battery_arc_levels[index] = level;
+    uint16_t start_angle = battery_arc_start_angle(index, level);
+    uint16_t end_angle = battery_arc_end_angle(index, level);
+    lv_opa_t opa = level > 0U ? LV_OPA_COVER : LV_OPA_TRANSP;
 
-    for (uint8_t segment = 0; segment < BATTERY_ARC_STEPS; segment++) {
-        if (battery_arcs[index][segment] == NULL) {
-            continue;
-        }
-
-        lv_obj_set_style_arc_opa(battery_arcs[index][segment],
-                                 segment < battery_arc_level_step(level) ? LV_OPA_COVER
-                                                                         : LV_OPA_TRANSP,
-                                 LV_PART_INDICATOR);
+    if (battery_outer_arcs[index] != NULL) {
+        lv_arc_set_angles(battery_outer_arcs[index], start_angle, end_angle);
+        lv_obj_set_style_arc_opa(battery_outer_arcs[index], opa, LV_PART_INDICATOR);
+    }
+    if (battery_inner_arcs[index] != NULL) {
+        lv_arc_set_angles(battery_inner_arcs[index], start_angle, end_angle);
+        lv_obj_set_style_arc_opa(battery_inner_arcs[index], opa, LV_PART_INDICATOR);
     }
 }
 
@@ -348,15 +344,16 @@ static void create_separator(lv_obj_t *screen, lv_coord_t x, lv_coord_t y, lv_co
     lv_obj_clear_flag(separator, LV_OBJ_FLAG_SCROLLABLE);
 }
 
-static lv_obj_t *create_outer_arc(lv_obj_t *screen, uint16_t start_angle, uint16_t end_angle,
-                                  lv_coord_t x_offset) {
+static lv_obj_t *create_battery_arc(lv_obj_t *screen, uint16_t start_angle, uint16_t end_angle,
+                                    lv_coord_t x_offset, lv_coord_t outer_offset,
+                                    lv_coord_t width, lv_color_t color) {
     lv_obj_t *arc = lv_arc_create(screen);
     lv_obj_remove_style_all(arc);
-    lv_obj_set_size(arc, SCREEN_SIZE, SCREEN_SIZE);
+    lv_obj_set_size(arc, SCREEN_SIZE - (outer_offset * 2), SCREEN_SIZE - (outer_offset * 2));
     lv_obj_align(arc, LV_ALIGN_CENTER, x_offset, 0);
     lv_arc_set_angles(arc, start_angle, end_angle);
-    lv_obj_set_style_arc_width(arc, BATTERY_ARC_WIDTH, LV_PART_INDICATOR);
-    lv_obj_set_style_arc_color(arc, lv_color_hex(0xffffff), LV_PART_INDICATOR);
+    lv_obj_set_style_arc_width(arc, width, LV_PART_INDICATOR);
+    lv_obj_set_style_arc_color(arc, color, LV_PART_INDICATOR);
     lv_obj_set_style_arc_opa(arc, LV_OPA_TRANSP, LV_PART_INDICATOR);
     lv_obj_set_style_bg_opa(arc, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_set_style_arc_opa(arc, LV_OPA_TRANSP, LV_PART_MAIN);
@@ -428,15 +425,23 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
     create_separator(screen, 150, 120, 61, 1);
     create_separator(screen, 120, 30, 1, 61);
     create_separator(screen, 120, 150, 1, 61);
-    
-    for (uint8_t segment = 0; segment < BATTERY_ARC_STEPS; segment++) {
-        battery_arcs[0][segment] =
-            create_outer_arc(screen, battery_arc_segment_start_angle(0, segment),
-                             battery_arc_segment_end_angle(0, segment), 4);
-        battery_arcs[1][segment] =
-            create_outer_arc(screen, battery_arc_segment_start_angle(1, segment),
-                             battery_arc_segment_end_angle(1, segment), -4);
-    }
+
+    battery_outer_arcs[0] =
+        create_battery_arc(screen, battery_arc_start_angle(0, 0), battery_arc_end_angle(0, 0), 4,
+                           BATTERY_ARC_OUTER_OFFSET, BATTERY_ARC_OUTER_WIDTH,
+                           lv_color_hex(0x000000));
+    battery_outer_arcs[1] =
+        create_battery_arc(screen, battery_arc_start_angle(1, 0), battery_arc_end_angle(1, 0), -4,
+                           BATTERY_ARC_OUTER_OFFSET, BATTERY_ARC_OUTER_WIDTH,
+                           lv_color_hex(0x000000));
+    battery_inner_arcs[0] =
+        create_battery_arc(screen, battery_arc_start_angle(0, 0), battery_arc_end_angle(0, 0), 4,
+                           BATTERY_ARC_INNER_OFFSET, BATTERY_ARC_INNER_WIDTH,
+                           lv_color_hex(0xffffff));
+    battery_inner_arcs[1] =
+        create_battery_arc(screen, battery_arc_start_angle(1, 0), battery_arc_end_angle(1, 0), -4,
+                           BATTERY_ARC_INNER_OFFSET, BATTERY_ARC_INNER_WIDTH,
+                           lv_color_hex(0xffffff));
     init_battery_arc_listener();
 
     for (uint8_t index = 0; index < BATTERY_ARC_COUNT; index++) {
