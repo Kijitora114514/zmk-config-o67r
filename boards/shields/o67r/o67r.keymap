@@ -1,6 +1,7 @@
 // This file was generated from a template. Edit it to match your keyboard.
 // See https://zmk.dev/docs/development/hardware-integration/new-shield for more instructions.
 
+#define ZMK_POINTING_DEFAULT_SCRL_VAL 120
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
 //#include <dt-bindings/zmk/rgb.h>
@@ -8,7 +9,6 @@
 #include <input/processors.dtsi>
 #include <behaviors/input_processor_absolute_to_relative.dtsi>
 #include <mouse-gesture.dtsi>
-#define ZMK_POINTING_DEFAULT_SCRL_VAL 120
 #include <dt-bindings/zmk/pointing.h>
 
 //#include <dt-bindings/zmk/studio.h>
@@ -51,7 +51,7 @@
             display-name = "Func";
             bindings = <
                 &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
-                &kp PSCRN  &kp F1    &kp F2    &kp F3  &kp F4  &kp F5  &trans     &kp F6     &kp F7     &kp F8   &kp F9     &kp F10    &kp EQUAL  &kp BSPC
+                &kp PSCRN  &msc SCRL_UP  &msc SCRL_DOWN  &kp F3  &kp F4  &kp F5  &trans     &kp F6     &kp F7     &kp F8   &kp F9     &kp F10    &kp EQUAL  &kp BSPC
                 &kp GRAVE  &kp Q     &kp W     &kp E   &kp R   &kp T   &trans     &kp Y      &kp U      &kp I    &kp O      &kp MINUS  &kp P      &kp BSLH
                 &kp TAB    &kp A     &kp S     &kp D   &kp F   &kp G   &kp SQT    &kp DEL    &kp H      &kp J    &kp K      &kp L      &kp SEMI   &kp KP_ENTER
                 &kp LSHFT  &kp Z     &kp X     &kp C   &kp V   &kp B   &kp LBKT   &kp RBKT   &kp N      &kp M    &kp COMMA  &kp DOT    &kp SLASH  &kp RSHFT
