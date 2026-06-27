@@ -125,14 +125,14 @@ disp_spi: &spi3 {
         compatible = "alps,ec11";
         a-gpios = <&gpio0  9 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
         b-gpios = <&gpio0 10 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
-        steps = <15>;//or 30
+        steps = <80>;// 15 or 30
         status = "okay";
     };
 
     sensors: sensors {
         compatible = "zmk,keymap-sensors";
         sensors = <&encoder0>;
-        triggers-per-rotation = <10>;
+        triggers-per-rotation = <20>;
     };
 
     touch_listener: touch_listener {
