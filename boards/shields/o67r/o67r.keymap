@@ -19,7 +19,23 @@
 #define O67R_STUDIO_UNLOCK &none
 #endif
 
+#ifdef CONFIG_EC11
+#define O67R_ENCODER_SENSOR_BINDINGS sensor-bindings = <&encoder_scroll>;
+#else
+#define O67R_ENCODER_SENSOR_BINDINGS
+#endif
+
 / {
+#ifdef CONFIG_EC11
+    behaviors {
+        encoder_scroll: encoder_scroll {
+            compatible = "zmk,behavior-sensor-rotate";
+            #sensor-binding-cells = <0>;
+            bindings = <&msc SCRL_UP>, <&msc SCRL_DOWN>;
+        };
+    };
+#endif
+
     keymap {
         compatible = "zmk,keymap";
 
@@ -33,9 +49,7 @@
                 &kp LSHFT  &kp Z     &kp X     &kp C   &kp V   &kp B   &kp LBKT      &kp RBKT   &kp N      &kp M    &kp COMMA  &kp DOT    &kp SLASH  &kp RSHFT
                 &kp LCTRL  &kp LWIN  &kp LALT  O67R_STUDIO_UNLOCK  &mo 1   &kp LANG2     &kp SPACE  &kp SPACE  &kp LANG1  &mo 1    &kp LEFT   &kp UP     &kp DOWN   &kp RIGHT
             >;
-            sensor-bindings =
-                <&inc_dec_kp Q W>,
-                <&inc_dec_kp Z X>;
+            O67R_ENCODER_SENSOR_BINDINGS
         };
 
         layer1 {
@@ -48,9 +62,7 @@
                 &kp LSHFT  &kp Z     &kp X     &kp C   &kp V   &kp B   &kp LBKT   &kp RBKT   &kp N      &kp M    &kp COMMA  &kp DOT    &kp SLASH  &kp RSHFT
                 &kp LCTRL  &kp LWIN  &kp LALT  O67R_STUDIO_UNLOCK  &trans  &kp LANG2  &kp SPACE  &kp SPACE  &kp LANG1  &trans   &kp HOME   &kp PG_UP  &kp PG_DN  &kp END
             >;
-            sensor-bindings =
-                <&inc_dec_kp Q W>,
-                <&inc_dec_kp Z X>;
+            O67R_ENCODER_SENSOR_BINDINGS
         };
 
         layer2 {
@@ -63,9 +75,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings =
-                <&inc_dec_kp Q W>,
-                <&inc_dec_kp Z X>;
+            O67R_ENCODER_SENSOR_BINDINGS
         };
 
         layer3 {
@@ -78,9 +88,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings =
-                <&inc_dec_kp Q W>,
-                <&inc_dec_kp Z X>;
+            O67R_ENCODER_SENSOR_BINDINGS
         };
 
         layer4 {
@@ -93,9 +101,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings =
-                <&inc_dec_kp Q W>,
-                <&inc_dec_kp Z X>;
+            O67R_ENCODER_SENSOR_BINDINGS
         };
 
         layer5 {
@@ -108,9 +114,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings =
-                <&inc_dec_kp Q W>,
-                <&inc_dec_kp Z X>;
+            O67R_ENCODER_SENSOR_BINDINGS
         };
 
         layer6 {
@@ -123,9 +127,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings =
-                <&inc_dec_kp Q W>,
-                <&inc_dec_kp Z X>;
+            O67R_ENCODER_SENSOR_BINDINGS
         };
 
         layer7 {
@@ -138,9 +140,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings =
-                <&inc_dec_kp Q W>,
-                <&inc_dec_kp Z X>;
+            O67R_ENCODER_SENSOR_BINDINGS
         };
 
         layer8 {
@@ -153,9 +153,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings =
-                <&inc_dec_kp Q W>,
-                <&inc_dec_kp Z X>;
+            O67R_ENCODER_SENSOR_BINDINGS
         };
 
         layer9 {
@@ -168,9 +166,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings =
-                <&inc_dec_kp Q W>,
-                <&inc_dec_kp Z X>;
+            O67R_ENCODER_SENSOR_BINDINGS
         };
     };
 };

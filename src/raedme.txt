@@ -10,3 +10,18 @@
 ※下記URLなどを使用
 https://lvgl.io/tools/imageconverter?utm_source=chatgpt.com
 
+
+
+ピン設定
+
+D10 SCLK
+D9  MOSI
+D8  TP_RST
+D7  TP_INT
+D6  studio unlock
+D5  TP_SCL
+D4  TP_SDA
+D3  LCD_BL
+D2  LCD_RST
+D1  LCD_DC
+D0  LCD_CS
