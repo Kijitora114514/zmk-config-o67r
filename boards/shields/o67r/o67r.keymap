@@ -23,9 +23,9 @@
 / {
     behaviors {
         encoder_scroll: encoder_scroll {
-            compatible = "zmk,behavior-sensor-rotate";
-            #sensor-binding-cells = <0>;
-            bindings = <&msc SCRL_UP>, <&msc SCRL_DOWN>;
+            compatible = "zmk,behavior-sensor-rotate-var";
+            #sensor-binding-cells = <2>;
+            bindings = <&msc>, <&msc>;
         };
     };
 
@@ -42,7 +42,7 @@
                 &kp LSHFT  &kp Z     &kp X     &kp C   &kp V   &kp B   &kp LBKT      &kp RBKT   &kp N      &kp M    &kp COMMA  &kp DOT    &kp SLASH  &kp RSHFT
                 &kp LCTRL  &kp LWIN  &kp LALT  O67R_STUDIO_UNLOCK  &mo 1   &kp LANG2     &kp SPACE  &kp SPACE  &kp LANG1  &mo 1    &kp LEFT   &kp UP     &kp DOWN   &kp RIGHT
             >;
-            sensor-bindings = <&encoder_scroll>;
+            sensor-bindings = <&encoder_scroll SCRL_UP SCRL_DOWN>;
         };
 
         layer1 {
@@ -55,7 +55,7 @@
                 &kp LSHFT  &kp Z     &kp X     &kp C   &kp V   &kp B   &kp LBKT   &kp RBKT   &kp N      &kp M    &kp COMMA  &kp DOT    &kp SLASH  &kp RSHFT
                 &kp LCTRL  &kp LWIN  &kp LALT  O67R_STUDIO_UNLOCK  &trans  &kp LANG2  &kp SPACE  &kp SPACE  &kp LANG1  &trans   &kp HOME   &kp PG_UP  &kp PG_DN  &kp END
             >;
-            sensor-bindings = <&encoder_scroll>;
+            sensor-bindings = <&encoder_scroll SCRL_UP SCRL_DOWN>;
         };
 
         layer2 {
@@ -68,7 +68,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&encoder_scroll>;
+            sensor-bindings = <&encoder_scroll SCRL_UP SCRL_DOWN>;
         };
 
         layer3 {
@@ -81,7 +81,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&encoder_scroll>;
+            sensor-bindings = <&encoder_scroll SCRL_UP SCRL_DOWN>;
         };
 
         layer4 {
@@ -94,7 +94,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&encoder_scroll>;
+            sensor-bindings = <&encoder_scroll SCRL_UP SCRL_DOWN>;
         };
 
         layer5 {
@@ -107,7 +107,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&encoder_scroll>;
+            sensor-bindings = <&encoder_scroll SCRL_UP SCRL_DOWN>;
         };
 
         layer6 {
@@ -120,7 +120,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&encoder_scroll>;
+            sensor-bindings = <&encoder_scroll SCRL_UP SCRL_DOWN>;
         };
 
         layer7 {
@@ -133,7 +133,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&encoder_scroll>;
+            sensor-bindings = <&encoder_scroll SCRL_UP SCRL_DOWN>;
         };
 
         layer8 {
@@ -146,7 +146,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&encoder_scroll>;
+            sensor-bindings = <&encoder_scroll SCRL_UP SCRL_DOWN>;
         };
 
         layer9 {
@@ -159,7 +159,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&encoder_scroll>;
+            sensor-bindings = <&encoder_scroll SCRL_UP SCRL_DOWN>;
         };
     };
 };
