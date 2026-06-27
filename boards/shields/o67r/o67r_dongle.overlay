@@ -121,14 +121,12 @@ disp_spi: &spi3 {
 };
 
 / {
-    encoders {
-        encoder0: encoder_dongle_0 {
-            compatible = "alps,ec11";
-            a-gpios = <&gpio0  9 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
-            b-gpios = <&gpio1 10 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
-            steps = <15>;
-            status = "okay";
-        };
+    encoder0: encoder0 {
+        compatible = "alps,ec11";
+        a-gpios = <&gpio0  9 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+        b-gpios = <&gpio0 10 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+        steps = <15>;//or 30
+        status = "okay";
     };
 
     sensors: sensors {
