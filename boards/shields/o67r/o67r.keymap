@@ -22,6 +22,16 @@
 
 
 / {
+    behaviors {
+        encoder_scroll: encoder_scroll {
+            compatible = "zmk,behavior-sensor-rotate";
+            #sensor-binding-cells = <0>;
+            tap-ms = <80>;
+            //bindings = <&msc MOVE_Y(120)>, <&msc MOVE_Y(-120)>;
+            bindings = <&msc MOVE_Y(120)>, <&msc MOVE_Y(-120)>;
+        };
+    };
+
     keymap {
         compatible = "zmk,keymap";
 
@@ -35,7 +45,7 @@
                 &kp LSHFT  &kp Z     &kp X     &kp C   &kp V   &kp B   &kp LBKT      &kp RBKT   &kp N      &kp M    &kp COMMA  &kp DOT    &kp SLASH  &kp RSHFT
                 &kp LCTRL  &kp LWIN  &kp LALT  O67R_STUDIO_UNLOCK  &mo 1   &kp LANG2     &kp SPACE  &kp SPACE  &kp LANG1  &mo 1    &kp LEFT   &kp UP     &kp DOWN   &kp RIGHT
             >;
-            sensor-bindings = <&inc_dec_kp Q W>;
+            sensor-bindings = <&encoder_scroll>;
         };
 
         layer1 {
@@ -48,7 +58,7 @@
                 &kp LSHFT  &kp Z     &kp X     &kp C   &kp V   &kp B   &kp LBKT   &kp RBKT   &kp N      &kp M    &kp COMMA  &kp DOT    &kp SLASH  &kp RSHFT
                 &kp LCTRL  &kp LWIN  &kp LALT  O67R_STUDIO_UNLOCK  &trans  &kp LANG2  &kp SPACE  &kp SPACE  &kp LANG1  &trans   &kp HOME   &kp PG_UP  &kp PG_DN  &kp END
             >;
-            sensor-bindings = <&inc_dec_kp Q W>;
+            sensor-bindings = <&encoder_scroll>;
         };
 
         layer2 {
@@ -61,7 +71,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&inc_dec_kp Q W>;
+            sensor-bindings = <&encoder_scroll>;
         };
 
         layer3 {
@@ -74,7 +84,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&inc_dec_kp Q W>;
+            sensor-bindings = <&encoder_scroll>;
         };
 
         layer4 {
@@ -87,7 +97,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&inc_dec_kp Q W>;
+            sensor-bindings = <&encoder_scroll>;
         };
 
         layer5 {
@@ -100,7 +110,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&inc_dec_kp Q W>;
+            sensor-bindings = <&encoder_scroll>;
         };
 
         layer6 {
@@ -113,7 +123,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&inc_dec_kp Q W>;
+            sensor-bindings = <&encoder_scroll>;
         };
 
         layer7 {
@@ -126,7 +136,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&inc_dec_kp Q W>;
+            sensor-bindings = <&encoder_scroll>;
         };
 
         layer8 {
@@ -139,7 +149,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&inc_dec_kp Q W>;
+            sensor-bindings = <&encoder_scroll>;
         };
 
         layer9 {
@@ -152,7 +162,7 @@
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
                 &none &none &none &none &none &none &none &none &none &none &none &none &none &none
             >;
-            sensor-bindings = <&inc_dec_kp Q W>;
+            sensor-bindings = <&encoder_scroll>;
         };
     };
 };
