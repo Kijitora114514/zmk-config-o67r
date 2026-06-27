@@ -19,7 +19,7 @@
     compatible = "zmk,kscan-gpio-direct";
     //wakeup-source;
     input-gpios
-        = <&gpio0 28 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // unlock
+        = <&gpio1 11 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // unlock
         ;
 };
 
@@ -30,16 +30,16 @@
 &pinctrl {
     spi3_default: spi3_default {
         group1 {
-            psels = <NRF_PSEL(SPIM_SCK, 1, 13)>,
-                <NRF_PSEL(SPIM_MOSI, 1, 15)>,
+            psels = <NRF_PSEL(SPIM_SCK, 1, 15)>,
+                <NRF_PSEL(SPIM_MOSI, 1, 14)>,
                 <NRF_PSEL(SPIM_MISO, 1, 10)>;
         };
     };
 
     spi3_sleep: spi3_sleep {
         group1 {
-            psels = <NRF_PSEL(SPIM_SCK, 1, 13)>,
-                <NRF_PSEL(SPIM_MOSI, 1, 15)>,
+            psels = <NRF_PSEL(SPIM_SCK, 1, 15)>,
+                <NRF_PSEL(SPIM_MOSI, 1, 14)>,
                 <NRF_PSEL(SPIM_MISO, 1, 10)>;
             low-power-enable;
         };
@@ -47,14 +47,14 @@
 
     pwm1_default: pwm1_default {
         group1 {
-            psels = <NRF_PSEL(PWM_OUT0, 1, 11)>;
+            psels = <NRF_PSEL(PWM_OUT0, 0, 29)>;
             nordic,invert;
         };
     };
 
     pwm1_sleep: pwm1_sleep {
         group1 {
-            psels = <NRF_PSEL(PWM_OUT0, 1, 11)>;
+            psels = <NRF_PSEL(PWM_OUT0, 0, 29)>;
             low-power-enable;
         };
     };
@@ -81,15 +81,15 @@ disp_spi: &spi3 {
     pinctrl-0 = <&spi3_default>;
     pinctrl-1 = <&spi3_sleep>;
     pinctrl-names = "default", "sleep";
-    cs-gpios = <&xiao_d 9 GPIO_ACTIVE_LOW>;
+    cs-gpios = <&xiao_d 0 GPIO_ACTIVE_LOW>;
 
     gc9a01: gc9a01@0 {
         compatible = "waveshare,gc9a01a";
         status = "okay";
         reg = <0>;
         spi-max-frequency = <8000000>;
-        cmd-data-gpios = <&xiao_d 7 GPIO_ACTIVE_HIGH>;
-        reset-gpios = <&xiao_d 3 GPIO_ACTIVE_HIGH>;
+        cmd-data-gpios = <&xiao_d 1 GPIO_ACTIVE_HIGH>;
+        reset-gpios = <&xiao_d 2 GPIO_ACTIVE_HIGH>;
         backlight-gpios = <&display_bl>;
         width = <240>;
         height = <240>;
@@ -117,8 +117,8 @@ disp_spi: &spi3 {
         compatible = "hynitron,cst816s";
         status = "okay";
         reg = <0x15>;
-        irq-gpios = <&xiao_d 0 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
-        rst-gpios = <&xiao_d 1 GPIO_ACTIVE_LOW>;
+        irq-gpios = <&xiao_d 7 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+        rst-gpios = <&xiao_d 8 GPIO_ACTIVE_LOW>;
     };
 };
 
