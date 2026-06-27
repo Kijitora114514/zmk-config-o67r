@@ -28,7 +28,7 @@
             #sensor-binding-cells = <0>;
             tap-ms = <80>;
             //bindings = <&msc MOVE_Y(120)>, <&msc MOVE_Y(-120)>;
-            bindings = <&msc MOVE_Y(120)>, <&msc MOVE_Y(-120)>;
+            bindings = <&msc SCRL_UP>, <&msc SCRL_DOWN>;
         };
     };
 
