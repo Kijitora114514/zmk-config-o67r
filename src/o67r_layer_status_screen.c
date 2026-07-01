@@ -67,7 +67,7 @@ static uint8_t battery_arc_levels[BATTERY_ARC_COUNT] = {BATTERY_ARC_UNKNOWN,
                                                         BATTERY_ARC_UNKNOWN};
 static const uint16_t battery_arc_zero_angles[BATTERY_ARC_COUNT] = {225, 315};
 static lv_obj_t *layer_name_label;
-static lv_obj_t *layer_name_shadow_label;
+// static lv_obj_t *layer_name_shadow_label;
 
 struct layer_name_state {
     zmk_keymap_layer_index_t index;
@@ -150,7 +150,7 @@ static void set_layer_name_label_text(lv_obj_t *label, struct layer_name_state s
 
 static void layer_name_update_cb(struct layer_name_state state) {
     set_layer_name_label_text(layer_name_label, state);
-    set_layer_name_label_text(layer_name_shadow_label, state);
+    // set_layer_name_label_text(layer_name_shadow_label, state);
 }
 
 static struct layer_name_state layer_name_get_state(const zmk_event_t *eh) {
@@ -169,11 +169,12 @@ ZMK_DISPLAY_WIDGET_LISTENER(o67r_layer_name, struct layer_name_state, layer_name
 ZMK_SUBSCRIPTION(o67r_layer_name, zmk_layer_state_changed);
 
 static void init_layer_name(lv_obj_t *screen) {
-    layer_name_shadow_label = lv_label_create(screen);
-    lv_label_set_text(layer_name_shadow_label, "");
-    lv_obj_set_style_text_color(layer_name_shadow_label, lv_color_hex(0x000000), LV_PART_MAIN);
-    lv_obj_set_style_text_font(layer_name_shadow_label, &lv_font_montserrat_32, LV_PART_MAIN);
-    lv_obj_align(layer_name_shadow_label, LV_ALIGN_BOTTOM_MID, 1, -LAYER_NAME_BOTTOM_OFFSET + 1);
+    // layer_name_shadow_label = lv_label_create(screen);
+    // lv_label_set_text(layer_name_shadow_label, "");
+    // lv_obj_set_style_text_color(layer_name_shadow_label, lv_color_hex(0x000000), LV_PART_MAIN);
+    // lv_obj_set_style_text_font(layer_name_shadow_label, &lv_font_montserrat_32, LV_PART_MAIN);
+    // lv_obj_align(layer_name_shadow_label, LV_ALIGN_BOTTOM_MID, 1,
+    //              -LAYER_NAME_BOTTOM_OFFSET + 1);
 
     layer_name_label = lv_label_create(screen);
     lv_label_set_text(layer_name_label, "");
@@ -424,13 +425,14 @@ static lv_obj_t *create_battery_arc(lv_obj_t *screen, uint16_t start_angle, uint
 
 static lv_obj_t *create_rotated_number(lv_obj_t *screen, const char *text, lv_coord_t x,
                                        lv_coord_t y, int32_t rotation, lv_obj_t **shadow_label) {
-    *shadow_label = lv_label_create(screen);
-    lv_label_set_text(*shadow_label, text);
-    lv_obj_set_style_text_color(*shadow_label, lv_color_hex(0x000000), LV_PART_MAIN);
-    lv_obj_set_style_text_font(*shadow_label, &lv_font_montserrat_32, LV_PART_MAIN);
-    lv_obj_set_style_transform_rotation(*shadow_label, rotation, LV_PART_MAIN);
-    lv_obj_align(*shadow_label, LV_ALIGN_CENTER, x + 1 - (SCREEN_SIZE / 2),
-                 y + 1 - (SCREEN_SIZE / 2));
+    // *shadow_label = lv_label_create(screen);
+    // lv_label_set_text(*shadow_label, text);
+    // lv_obj_set_style_text_color(*shadow_label, lv_color_hex(0x000000), LV_PART_MAIN);
+    // lv_obj_set_style_text_font(*shadow_label, &lv_font_montserrat_32, LV_PART_MAIN);
+    // lv_obj_set_style_transform_rotation(*shadow_label, rotation, LV_PART_MAIN);
+    // lv_obj_align(*shadow_label, LV_ALIGN_CENTER, x + 1 - (SCREEN_SIZE / 2),
+    //              y + 1 - (SCREEN_SIZE / 2));
+    LV_UNUSED(shadow_label);
 
     lv_obj_t *label = lv_label_create(screen);
     lv_label_set_text(label, text);
@@ -452,13 +454,13 @@ static void update_position_labels(void) {
         }
 
         lv_label_set_text_fmt(position_labels[index], "%u", current_page * 4U + index + 1U);
-        lv_label_set_text_fmt(position_shadow_labels[index], "%u",
-                              current_page * 4U + index + 1U);
+        // lv_label_set_text_fmt(position_shadow_labels[index], "%u",
+        //                       current_page * 4U + index + 1U);
         lv_obj_align(position_labels[index], LV_ALIGN_CENTER, label_x[index] - (SCREEN_SIZE / 2),
                      label_y[index] - (SCREEN_SIZE / 2));
-        lv_obj_align(position_shadow_labels[index], LV_ALIGN_CENTER,
-                     label_x[index] + 1 - (SCREEN_SIZE / 2),
-                     label_y[index] + 1 - (SCREEN_SIZE / 2));
+        // lv_obj_align(position_shadow_labels[index], LV_ALIGN_CENTER,
+        //              label_x[index] + 1 - (SCREEN_SIZE / 2),
+        //              label_y[index] + 1 - (SCREEN_SIZE / 2));
     }
 }
 
