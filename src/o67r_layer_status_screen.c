@@ -7,6 +7,7 @@
 #include <lvgl.h>
 
 #include <stdint.h>
+#include <string.h>
 
 #include <zephyr/device.h>
 #include <zephyr/drivers/i2c.h>
@@ -15,9 +16,10 @@
 
 #include <zmk/display.h>
 #include <zmk/display/status_screen.h>
+#include <zmk/events/layer_state_changed.h>
+#include <zmk/event_manager.h>
 #if IS_ENABLED(CONFIG_ZMK_BLE)
 #include <zmk/events/battery_state_changed.h>
-#include <zmk/event_manager.h>
 #endif
 #include <zmk/keymap.h>
 
@@ -32,6 +34,7 @@
 #define BATTERY_ARC_INNER_OFFSET 5
 #define BATTERY_ARC_INNER_WIDTH 4
 #define BATTERY_ARC_UNKNOWN UINT8_MAX
+#define LAYER_NAME_BOTTOM_OFFSET 5
 /* 0x808080 pre-corrected for the display's RGB565 byte order. */
 // #define DISPLAY_GRAY_HEX 0x101021
 
@@ -63,6 +66,13 @@ static lv_obj_t *battery_inner_arcs[BATTERY_ARC_COUNT];
 static uint8_t battery_arc_levels[BATTERY_ARC_COUNT] = {BATTERY_ARC_UNKNOWN,
                                                         BATTERY_ARC_UNKNOWN};
 static const uint16_t battery_arc_zero_angles[BATTERY_ARC_COUNT] = {225, 315};
+static lv_obj_t *layer_name_label;
+static lv_obj_t *layer_name_shadow_label;
+
+struct layer_name_state {
+    zmk_keymap_layer_index_t index;
+    const char *label;
+};
 
 static void set_display_brightness(void) {
     if (!pwm_is_ready_dt(&display_backlight)) {
@@ -124,6 +134,55 @@ static void set_battery_arc_level(uint8_t index, uint8_t level) {
         lv_arc_set_angles(battery_inner_arcs[index], start_angle, end_angle);
         lv_obj_set_style_arc_opa(battery_inner_arcs[index], opa, LV_PART_INDICATOR);
     }
+}
+
+static void set_layer_name_label_text(lv_obj_t *label, struct layer_name_state state) {
+    if (label == NULL) {
+        return;
+    }
+
+    if (state.label != NULL && strlen(state.label) > 0) {
+        lv_label_set_text(label, state.label);
+    } else {
+        lv_label_set_text_fmt(label, "%u", state.index);
+    }
+}
+
+static void layer_name_update_cb(struct layer_name_state state) {
+    set_layer_name_label_text(layer_name_label, state);
+    set_layer_name_label_text(layer_name_shadow_label, state);
+}
+
+static struct layer_name_state layer_name_get_state(const zmk_event_t *eh) {
+    LV_UNUSED(eh);
+
+    zmk_keymap_layer_index_t index = zmk_keymap_highest_layer_active();
+
+    return (struct layer_name_state){
+        .index = index,
+        .label = zmk_keymap_layer_name(zmk_keymap_layer_index_to_id(index)),
+    };
+}
+
+ZMK_DISPLAY_WIDGET_LISTENER(o67r_layer_name, struct layer_name_state, layer_name_update_cb,
+                            layer_name_get_state);
+ZMK_SUBSCRIPTION(o67r_layer_name, zmk_layer_state_changed);
+
+static void init_layer_name(lv_obj_t *screen) {
+    layer_name_shadow_label = lv_label_create(screen);
+    lv_label_set_text(layer_name_shadow_label, "");
+    lv_obj_set_style_text_color(layer_name_shadow_label, lv_color_hex(0x000000), LV_PART_MAIN);
+    lv_obj_set_style_text_font(layer_name_shadow_label, &lv_font_montserrat_32, LV_PART_MAIN);
+    lv_obj_align(layer_name_shadow_label, LV_ALIGN_BOTTOM_MID, 1, -LAYER_NAME_BOTTOM_OFFSET + 1);
+
+    layer_name_label = lv_label_create(screen);
+    lv_label_set_text(layer_name_label, "");
+    lv_obj_set_style_text_color(layer_name_label, lv_color_hex(0xffffff), LV_PART_MAIN);
+    lv_obj_set_style_text_font(layer_name_label, &lv_font_montserrat_32, LV_PART_MAIN);
+    lv_obj_align(layer_name_label, LV_ALIGN_BOTTOM_MID, 0, -LAYER_NAME_BOTTOM_OFFSET);
+
+    o67r_layer_name_init();
+    layer_name_update_cb(layer_name_get_state(NULL));
 }
 
 #if IS_ENABLED(CONFIG_ZMK_BLE)
@@ -495,6 +554,7 @@ lv_obj_t *zmk_display_status_screen(void) {
     lv_obj_center(image);
 
     init_swipe_status(screen);
+    init_layer_name(screen);
 
     return screen;
 }
