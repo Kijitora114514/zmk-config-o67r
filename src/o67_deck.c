@@ -14,6 +14,7 @@
 #include <zephyr/drivers/pwm.h>
 #include <zephyr/sys/util.h>
 
+#include <drivers/behavior.h>
 #include <zmk/display.h>
 #include <zmk/display/status_screen.h>
 #include <zmk/events/layer_state_changed.h>
