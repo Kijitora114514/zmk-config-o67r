@@ -10,7 +10,7 @@ from pathlib import Path
 
 MAP_PATTERN = re.compile(
     r"(?s)(const\s+LV_ATTRIBUTE_MEM_ALIGN\s+LV_ATTRIBUTE_LARGE_CONST\s+"
-    r"LV_ATTRIBUTE_IMAGE_DISP\s+uint8_t\s+disp_map\[\]\s*=\s*\{)(.*?)(\n\};)"
+    r"LV_ATTRIBUTE_IMAGE_[A-Za-z0-9_]+\s+uint8_t\s+[A-Za-z0-9_]+_map\[\]\s*=\s*\{)(.*?)(\n\};)"
 )
 BYTE_PATTERN = re.compile(r"0x[0-9a-fA-F]{2}")
 
@@ -18,11 +18,11 @@ BYTE_PATTERN = re.compile(r"0x[0-9a-fA-F]{2}")
 def swap_rgb565_bytes(source: str) -> str:
     match = MAP_PATTERN.search(source)
     if match is None:
-        raise ValueError("disp_map array was not found")
+        raise ValueError("LVGL image map array was not found")
 
     byte_values = [token.lower() for token in BYTE_PATTERN.findall(match.group(2))]
     if len(byte_values) % 2 != 0:
-        raise ValueError(f"disp_map contains an odd byte count: {len(byte_values)}")
+        raise ValueError(f"LVGL image map contains an odd byte count: {len(byte_values)}")
 
     for index in range(0, len(byte_values), 2):
         byte_values[index], byte_values[index + 1] = byte_values[index + 1], byte_values[index]
@@ -40,7 +40,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Generate a byte-swapped RGB565 LVGL C image source."
     )
-    parser.add_argument("input", type=Path, help="Original LVGL C image source, e.g. src/disp.c")
+    parser.add_argument("input", type=Path, help="Original LVGL C image source, e.g. src/disp1.c")
     parser.add_argument(
         "output",
         type=Path,
