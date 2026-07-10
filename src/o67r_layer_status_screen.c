@@ -42,9 +42,16 @@
 #define TP_DEBUG false
 #endif
 
+#ifndef TP_GUIDE
+#define TP_GUIDE false
+#endif
+
 #ifndef TP_PAGE_COUNT
 #define TP_PAGE_COUNT 3
 #endif
+
+#define SWIPE_RIGHT_POSITION 13U
+#define SWIPE_LEFT_POSITION 14U
 
 #if TP_PAGE_COUNT < 1
 #error "TP_PAGE_COUNT must be at least 1"
@@ -250,10 +257,6 @@ static uint32_t touch_position_from_coordinates(uint16_t x, uint16_t y) {
     return page_position + (x <= 120 ? 4U : 3U);
 }
 
-static uint32_t vertical_swipe_position(bool swipe_up) {
-    return (TP_PAGE_COUNT * 4U) + (current_page * 2U) + (swipe_up ? 1U : 2U);
-}
-
 static void change_page(int32_t direction) {
     if (direction < 0) {
         current_page = current_page == 0U ? TP_PAGE_COUNT - 1U : current_page - 1U;
@@ -360,19 +363,19 @@ static void touch_poll_timer_cb(lv_timer_t *timer) {
         swipe_detected = true;
         if (delta_x < 0) {
             show_swipe_direction("LEFT");
-            change_page(-1);
+            send_touch_position_tap(SWIPE_LEFT_POSITION);
         } else {
             show_swipe_direction("RIGHT");
-            change_page(1);
+            send_touch_position_tap(SWIPE_RIGHT_POSITION);
         }
     } else if (distance_y >= SWIPE_THRESHOLD) {
         swipe_detected = true;
         if (delta_y < 0) {
             show_swipe_direction("UP");
-            send_touch_position_tap(vertical_swipe_position(true));
+            change_page(1);
         } else {
             show_swipe_direction("DOWN");
-            send_touch_position_tap(vertical_swipe_position(false));
+            change_page(-1);
         }
     }
 
@@ -477,14 +480,16 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
         return;
     }
 
-    //create_separator(screen, 30, 120, 71, 1);
-    //create_separator(screen, 140, 120, 71, 1);
-    //create_separator(screen, 120, 30, 1, 71);
-    //create_separator(screen, 120, 140, 1, 71);
-    create_separator(screen, 30, 120, 61, 1);
-    create_separator(screen, 150, 120, 61, 1);
-    create_separator(screen, 120, 30, 1, 61);
-    create_separator(screen, 120, 150, 1, 61);
+    if (TP_GUIDE) {
+        //create_separator(screen, 30, 120, 71, 1);
+        //create_separator(screen, 140, 120, 71, 1);
+        //create_separator(screen, 120, 30, 1, 71);
+        //create_separator(screen, 120, 140, 1, 71);
+        create_separator(screen, 30, 120, 61, 1);
+        create_separator(screen, 150, 120, 61, 1);
+        create_separator(screen, 120, 30, 1, 61);
+        create_separator(screen, 120, 150, 1, 61);
+    }
 
     // battery_outer_arcs[0] =
     //     create_battery_arc(screen, battery_arc_start_angle(0, 0),
@@ -512,15 +517,17 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
         }
     }
 
-    position_labels[0] =
-        create_rotated_number(screen, "1", 80, 80, 0, &position_shadow_labels[0]);
-    position_labels[1] =
-        create_rotated_number(screen, "2", 160, 80, 0, &position_shadow_labels[1]);
-    position_labels[2] =
-        create_rotated_number(screen, "3", 160, 160, 0, &position_shadow_labels[2]);
-    position_labels[3] =
-        create_rotated_number(screen, "4", 80, 160, 0, &position_shadow_labels[3]);
-    update_position_labels();
+    if (TP_GUIDE) {
+        position_labels[0] =
+            create_rotated_number(screen, "1", 80, 80, 0, &position_shadow_labels[0]);
+        position_labels[1] =
+            create_rotated_number(screen, "2", 160, 80, 0, &position_shadow_labels[1]);
+        position_labels[2] =
+            create_rotated_number(screen, "3", 160, 160, 0, &position_shadow_labels[2]);
+        position_labels[3] =
+            create_rotated_number(screen, "4", 80, 160, 0, &position_shadow_labels[3]);
+        update_position_labels();
+    }
 }
 
 static void init_swipe_status(lv_obj_t *screen) {
