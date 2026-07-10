@@ -57,23 +57,9 @@
 #error "TP_PAGE_COUNT must be at least 1"
 #endif
 
-extern const lv_image_dsc_t disp1;
-extern const lv_image_dsc_t disp2;
-extern const lv_image_dsc_t disp3;
+extern const lv_image_dsc_t disp;
 
-static const lv_image_dsc_t *const page_images[] = {
-    &disp1,
-    &disp2,
-    &disp3,
-};
 static uint32_t current_page = 0U;
-static lv_obj_t *page_image;
-
-static void update_page_image(void) {
-    if (page_image != NULL) {
-        lv_image_set_src(page_image, page_images[current_page % ARRAY_SIZE(page_images)]);
-    }
-}
 
 #define DISPLAY_BACKLIGHT_NODE DT_NODELABEL(display_bl)
 
@@ -280,7 +266,6 @@ static void change_page(int32_t direction) {
     }
 
     update_position_labels();
-    update_page_image();
 }
 
 static void set_touch_position_state(uint32_t position, bool pressed) {
@@ -574,9 +559,9 @@ lv_obj_t *zmk_display_status_screen(void) {
     lv_obj_set_style_bg_color(screen, lv_color_hex(0x000000), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, LV_PART_MAIN);
 
-    page_image = lv_image_create(screen);
-    update_page_image();
-    lv_obj_center(page_image);
+    lv_obj_t *image = lv_image_create(screen);
+    lv_image_set_src(image, &disp);
+    lv_obj_center(image);
 
     init_swipe_status(screen);
     init_layer_name(screen);

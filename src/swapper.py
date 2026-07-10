@@ -40,7 +40,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Generate a byte-swapped RGB565 LVGL C image source."
     )
-    parser.add_argument("input", type=Path, help="Original LVGL C image source, e.g. src/disp1.c")
+    parser.add_argument("input", type=Path, help="Original LVGL C image source, e.g. src/disp.c")
     parser.add_argument(
         "output",
         type=Path,
