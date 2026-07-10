@@ -57,7 +57,7 @@
 #error "TP_PAGE_COUNT must be at least 1"
 #endif
 
-extern const lv_image_dsc_t disp_view;
+extern const lv_image_dsc_t disp;
 
 #define DISPLAY_BACKLIGHT_NODE DT_NODELABEL(display_bl)
 
@@ -559,7 +559,7 @@ lv_obj_t *zmk_display_status_screen(void) {
     lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, LV_PART_MAIN);
 
     lv_obj_t *image = lv_image_create(screen);
-    lv_image_set_src(image, &disp_view);
+    lv_image_set_src(image, &disp);
     lv_obj_center(image);
 
     init_swipe_status(screen);
