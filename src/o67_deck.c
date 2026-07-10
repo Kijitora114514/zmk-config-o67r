@@ -60,6 +60,10 @@
 extern const lv_image_dsc_t disp;
 
 static uint32_t current_page = 0U;
+static const char *const touch_position_names[] = {
+    "A",   "B",   "C", "D", "E", "F", "G",
+    "H",   "I",   "J", "K", "L", "TMU", "TMD",
+};
 
 #define DISPLAY_BACKLIGHT_NODE DT_NODELABEL(display_bl)
 
@@ -244,7 +248,6 @@ static uint16_t touch_last_y;
 static uint32_t touch_key_position;
 static uint32_t pending_release_position;
 static lv_obj_t *position_labels[4];
-static lv_obj_t *position_shadow_labels[4];
 
 static void update_position_labels(void);
 
@@ -427,25 +430,22 @@ static lv_obj_t *create_battery_arc(lv_obj_t *screen, uint16_t start_angle, uint
     return arc;
 }
 
-static lv_obj_t *create_rotated_number(lv_obj_t *screen, const char *text, lv_coord_t x,
-                                       lv_coord_t y, int32_t rotation, lv_obj_t **shadow_label) {
-    // *shadow_label = lv_label_create(screen);
-    // lv_label_set_text(*shadow_label, text);
-    // lv_obj_set_style_text_color(*shadow_label, lv_color_hex(0x000000), LV_PART_MAIN);
-    // lv_obj_set_style_text_font(*shadow_label, &lv_font_montserrat_32, LV_PART_MAIN);
-    // lv_obj_set_style_transform_rotation(*shadow_label, rotation, LV_PART_MAIN);
-    // lv_obj_align(*shadow_label, LV_ALIGN_CENTER, x + 1 - (SCREEN_SIZE / 2),
-    //              y + 1 - (SCREEN_SIZE / 2));
-    LV_UNUSED(shadow_label);
-
+static lv_obj_t *create_key_name_label(lv_obj_t *screen, lv_coord_t x, lv_coord_t y) {
     lv_obj_t *label = lv_label_create(screen);
-    lv_label_set_text(label, text);
+    lv_label_set_text(label, "");
     lv_obj_set_style_text_color(label, lv_color_hex(0xffffff), LV_PART_MAIN);
     lv_obj_set_style_text_font(label, &lv_font_montserrat_32, LV_PART_MAIN);
-    lv_obj_set_style_transform_rotation(label, rotation, LV_PART_MAIN);
     lv_obj_align(label, LV_ALIGN_CENTER, x - (SCREEN_SIZE / 2), y - (SCREEN_SIZE / 2));
 
     return label;
+}
+
+static const char *touch_position_label(uint32_t position) {
+    if (position > 0U && position <= ARRAY_SIZE(touch_position_names)) {
+        return touch_position_names[position - 1U];
+    }
+
+    return "?";
 }
 
 static void update_position_labels(void) {
@@ -453,18 +453,15 @@ static void update_position_labels(void) {
     static const lv_coord_t label_y[] = {80, 80, 160, 160};
 
     for (uint32_t index = 0; index < 4U; index++) {
+        uint32_t position = current_page * 4U + index + 1U;
+
         if (position_labels[index] == NULL) {
             continue;
         }
 
-        lv_label_set_text_fmt(position_labels[index], "%u", current_page * 4U + index + 1U);
-        // lv_label_set_text_fmt(position_shadow_labels[index], "%u",
-        //                       current_page * 4U + index + 1U);
+        lv_label_set_text(position_labels[index], touch_position_label(position));
         lv_obj_align(position_labels[index], LV_ALIGN_CENTER, label_x[index] - (SCREEN_SIZE / 2),
                      label_y[index] - (SCREEN_SIZE / 2));
-        // lv_obj_align(position_shadow_labels[index], LV_ALIGN_CENTER,
-        //              label_x[index] + 1 - (SCREEN_SIZE / 2),
-        //              label_y[index] + 1 - (SCREEN_SIZE / 2));
     }
 }
 
@@ -519,14 +516,10 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
     }
 
     if (TP_GUIDE) {
-        position_labels[0] =
-            create_rotated_number(screen, "1", 80, 80, 0, &position_shadow_labels[0]);
-        position_labels[1] =
-            create_rotated_number(screen, "2", 160, 80, 0, &position_shadow_labels[1]);
-        position_labels[2] =
-            create_rotated_number(screen, "3", 160, 160, 0, &position_shadow_labels[2]);
-        position_labels[3] =
-            create_rotated_number(screen, "4", 80, 160, 0, &position_shadow_labels[3]);
+        position_labels[0] = create_key_name_label(screen, 80, 80);
+        position_labels[1] = create_key_name_label(screen, 160, 80);
+        position_labels[2] = create_key_name_label(screen, 160, 160);
+        position_labels[3] = create_key_name_label(screen, 80, 160);
         update_position_labels();
     }
 }
