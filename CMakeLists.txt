@@ -23,3 +23,7 @@ if(CONFIG_ZMK_DISPLAY_STATUS_SCREEN_CUSTOM)
     ${O67R_SWAPPED_DISP_C}
   )
 endif()
+
+target_sources(app PRIVATE
+  src/o67r_task_move.c
+)

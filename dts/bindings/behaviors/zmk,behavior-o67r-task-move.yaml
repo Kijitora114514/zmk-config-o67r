@@ -1,0 +1,10 @@
+description: O67R Alt-Tab task move behavior
+
+compatible: "zmk,behavior-o67r-task-move"
+
+include: zero_param.yaml
+
+properties:
+  reverse:
+    type: boolean
+    description: Send Alt+Shift+Tab instead of Alt+Tab.

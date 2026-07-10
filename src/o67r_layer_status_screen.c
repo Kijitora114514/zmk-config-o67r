@@ -43,7 +43,7 @@
 #endif
 
 #ifndef TP_GUIDE
-#define TP_GUIDE false
+#define TP_GUIDE true
 #endif
 
 #ifndef TP_PAGE_COUNT
