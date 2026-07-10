@@ -19,7 +19,7 @@ if(CONFIG_ZMK_DISPLAY_STATUS_SCREEN_CUSTOM)
   endif()
 
   target_sources(app PRIVATE
-    src/o67r_layer_status_screen.c
+    src/o67_deck.c
     ${O67R_SWAPPED_DISP_C}
   )
 endif()

@@ -35,13 +35,13 @@
         task_move_u: task_move_u {
             compatible = "zmk,behavior-o67r-task-move";
             #binding-cells = <0>;
-            release-after-ms = <1000>;
+            release-after-ms = <1200>;
         };
 
         task_move_d: task_move_d {
             compatible = "zmk,behavior-o67r-task-move";
             #binding-cells = <0>;
-            release-after-ms = <1000>;
+            release-after-ms = <1200>;
             reverse;
         };
     };
