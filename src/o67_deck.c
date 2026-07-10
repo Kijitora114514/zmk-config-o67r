@@ -18,6 +18,7 @@
 #include <zmk/display/status_screen.h>
 #include <zmk/events/layer_state_changed.h>
 #include <zmk/event_manager.h>
+#include <dt-bindings/zmk/keys.h>
 #if IS_ENABLED(CONFIG_ZMK_BLE)
 #include <zmk/events/battery_state_changed.h>
 #endif
@@ -29,6 +30,7 @@
 #define SWIPE_THRESHOLD 30
 #define TOUCH_POLL_MS 20
 #define TAP_RELEASE_MS 20
+#define GUIDE_REFRESH_MS 500
 #define BATTERY_ARC_DEGREES 90
 #define BATTERY_ARC_COUNT 2
 #define BATTERY_ARC_INNER_OFFSET 5
@@ -60,10 +62,6 @@
 extern const lv_image_dsc_t disp;
 
 static uint32_t current_page = 0U;
-static const char *const touch_position_names[] = {
-    "A",   "B",   "C", "D", "E", "F", "G",
-    "H",   "I",   "J", "K", "L", "TMU", "TMD",
-};
 
 #define DISPLAY_BACKLIGHT_NODE DT_NODELABEL(display_bl)
 
@@ -248,6 +246,7 @@ static uint16_t touch_last_y;
 static uint32_t touch_key_position;
 static uint32_t pending_release_position;
 static lv_obj_t *position_labels[4];
+static char position_label_text[4][12];
 
 static void update_position_labels(void);
 
@@ -440,10 +439,251 @@ static lv_obj_t *create_key_name_label(lv_obj_t *screen, lv_coord_t x, lv_coord_
     return label;
 }
 
-static const char *touch_position_label(uint32_t position) {
-    if (position > 0U && position <= ARRAY_SIZE(touch_position_names)) {
-        return touch_position_names[position - 1U];
+static const char *hex_keycode_label(uint32_t keycode, char *fallback, size_t fallback_size) {
+    static const char hex[] = "0123456789ABCDEF";
+
+    if (fallback_size < 7U) {
+        return "?";
     }
+
+    fallback[0] = '0';
+    fallback[1] = 'x';
+    fallback[2] = hex[(keycode >> 12) & 0x0f];
+    fallback[3] = hex[(keycode >> 8) & 0x0f];
+    fallback[4] = hex[(keycode >> 4) & 0x0f];
+    fallback[5] = hex[keycode & 0x0f];
+    fallback[6] = '\0';
+
+    return fallback;
+}
+
+static const char *keycode_label(uint32_t keycode, char *fallback, size_t fallback_size) {
+    switch (keycode) {
+    case A:
+        return "A";
+    case B:
+        return "B";
+    case C:
+        return "C";
+    case D:
+        return "D";
+    case E:
+        return "E";
+    case F:
+        return "F";
+    case G:
+        return "G";
+    case H:
+        return "H";
+    case I:
+        return "I";
+    case J:
+        return "J";
+    case K:
+        return "K";
+    case L:
+        return "L";
+    case M:
+        return "M";
+    case N:
+        return "N";
+    case O:
+        return "O";
+    case P:
+        return "P";
+    case Q:
+        return "Q";
+    case R:
+        return "R";
+    case S:
+        return "S";
+    case T:
+        return "T";
+    case U:
+        return "U";
+    case V:
+        return "V";
+    case W:
+        return "W";
+    case X:
+        return "X";
+    case Y:
+        return "Y";
+    case Z:
+        return "Z";
+    case N0:
+        return "0";
+    case N1:
+        return "1";
+    case N2:
+        return "2";
+    case N3:
+        return "3";
+    case N4:
+        return "4";
+    case N5:
+        return "5";
+    case N6:
+        return "6";
+    case N7:
+        return "7";
+    case N8:
+        return "8";
+    case N9:
+        return "9";
+    case ESC:
+        return "ESC";
+    case TAB:
+        return "TAB";
+    case SPACE:
+        return "SPC";
+    case BSPC:
+        return "BSPC";
+    case DEL:
+        return "DEL";
+    case ENTER:
+        return "ENT";
+    case KP_ENTER:
+        return "KPENT";
+    case LSHFT:
+        return "LSFT";
+    case RSHFT:
+        return "RSFT";
+    case LCTRL:
+        return "LCTL";
+    case LALT:
+        return "LALT";
+    case LWIN:
+        return "LWIN";
+    case LEFT:
+        return "LEFT";
+    case RIGHT:
+        return "RGHT";
+    case UP:
+        return "UP";
+    case DOWN:
+        return "DOWN";
+    case HOME:
+        return "HOME";
+    case END:
+        return "END";
+    case PG_UP:
+        return "PGUP";
+    case PG_DN:
+        return "PGDN";
+    case F1:
+        return "F1";
+    case F2:
+        return "F2";
+    case F3:
+        return "F3";
+    case F4:
+        return "F4";
+    case F5:
+        return "F5";
+    case F6:
+        return "F6";
+    case F7:
+        return "F7";
+    case F8:
+        return "F8";
+    case F9:
+        return "F9";
+    case F10:
+        return "F10";
+    case PSCRN:
+        return "PSCR";
+    case GRAVE:
+        return "`";
+    case MINUS:
+        return "-";
+    case EQUAL:
+        return "=";
+    case LBKT:
+        return "[";
+    case RBKT:
+        return "]";
+    case BSLH:
+        return "\\";
+    case SEMI:
+        return ";";
+    case SQT:
+        return "'";
+    case COMMA:
+        return ",";
+    case DOT:
+        return ".";
+    case SLASH:
+        return "/";
+    case LANG1:
+        return "LN1";
+    case LANG2:
+        return "LN2";
+    }
+
+    return hex_keycode_label(keycode, fallback, fallback_size);
+}
+
+static bool binding_is_transparent(const struct zmk_behavior_binding *binding) {
+    if (binding->behavior_dev == NULL) {
+        return false;
+    }
+
+#if DT_NODE_EXISTS(DT_NODELABEL(trans))
+    return strcmp(binding->behavior_dev, DEVICE_DT_NAME(DT_NODELABEL(trans))) == 0;
+#else
+    return false;
+#endif
+}
+
+static const struct zmk_behavior_binding *active_binding_at_position(uint32_t position) {
+    zmk_keymap_layer_index_t highest_layer = zmk_keymap_highest_layer_active();
+
+    for (int32_t layer_index = highest_layer; layer_index >= 0; layer_index--) {
+        zmk_keymap_layer_id_t layer_id = zmk_keymap_layer_index_to_id(layer_index);
+        const struct zmk_behavior_binding *binding =
+            zmk_keymap_get_layer_binding_at_idx(layer_id, position);
+
+        if (binding == NULL || binding_is_transparent(binding)) {
+            continue;
+        }
+
+        return binding;
+    }
+
+    return NULL;
+}
+
+static const char *binding_label(const struct zmk_behavior_binding *binding, char *fallback,
+                                 size_t fallback_size) {
+    if (binding == NULL) {
+        return "?";
+    }
+    if (binding->behavior_dev == NULL) {
+        return "?";
+    }
+
+    if (strcmp(binding->behavior_dev, DEVICE_DT_NAME(DT_INST(0, zmk_behavior_key_press))) == 0) {
+        return keycode_label(binding->param1, fallback, fallback_size);
+    }
+
+#if DT_NODE_EXISTS(DT_NODELABEL(task_move_u))
+    if (strcmp(binding->behavior_dev, DEVICE_DT_NAME(DT_NODELABEL(task_move_u))) == 0) {
+        return "TMU";
+    }
+#endif
+
+#if DT_NODE_EXISTS(DT_NODELABEL(task_move_d))
+    if (strcmp(binding->behavior_dev, DEVICE_DT_NAME(DT_NODELABEL(task_move_d))) == 0) {
+        return "TMD";
+    }
+#endif
+
+#if DT_NODE_EXISTS(DT_NODELABEL(none))
+    if (strcmp(binding->behavior_dev, DEVICE_DT_NAME(DT_NODELABEL(none))) == 0) {
+        return "";
+    }
+#endif
 
     return "?";
 }
@@ -459,10 +699,18 @@ static void update_position_labels(void) {
             continue;
         }
 
-        lv_label_set_text(position_labels[index], touch_position_label(position));
+        lv_label_set_text(position_labels[index],
+                          binding_label(active_binding_at_position(position),
+                                        position_label_text[index],
+                                        sizeof(position_label_text[index])));
         lv_obj_align(position_labels[index], LV_ALIGN_CENTER, label_x[index] - (SCREEN_SIZE / 2),
                      label_y[index] - (SCREEN_SIZE / 2));
     }
+}
+
+static void guide_refresh_timer_cb(lv_timer_t *timer) {
+    LV_UNUSED(timer);
+    update_position_labels();
 }
 
 static void init_touchpad_overlay(lv_obj_t *screen) {
@@ -521,6 +769,7 @@ static void init_touchpad_overlay(lv_obj_t *screen) {
         position_labels[2] = create_key_name_label(screen, 160, 160);
         position_labels[3] = create_key_name_label(screen, 80, 160);
         update_position_labels();
+        lv_timer_create(guide_refresh_timer_cb, GUIDE_REFRESH_MS, NULL);
     }
 }
 
