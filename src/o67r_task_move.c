@@ -16,10 +16,11 @@
 #include <drivers/behavior.h>
 #include <zmk/behavior.h>
 #include <zmk/event_manager.h>
-#include <zmk/events/keycode_state_changed.h>
+#include <zmk/events/position_state_changed.h>
 
 #define TASK_MOVE_ALT_TIMEOUT_MS 2000
 #define TASK_MOVE_TAP_MS 30
+#define KEY_PRESS DEVICE_DT_NAME(DT_INST(0, zmk_behavior_key_press))
 
 struct task_move_config {
     bool reverse;
@@ -29,8 +30,17 @@ static bool alt_pressed;
 static bool shift_pressed;
 static bool tab_pressed;
 
-static void send_keycode(uint32_t keycode, bool pressed) {
-    raise_zmk_keycode_state_changed_from_encoded(keycode, pressed, k_uptime_get());
+static void invoke_keycode(uint32_t keycode, bool pressed) {
+    struct zmk_behavior_binding binding = {
+        .behavior_dev = KEY_PRESS,
+        .param1 = keycode,
+    };
+    struct zmk_behavior_binding_event event = {
+        .position = 0,
+        .timestamp = k_uptime_get(),
+    };
+
+    zmk_behavior_invoke_binding(&binding, event, pressed);
 }
 
 static void release_alt(void) {
@@ -39,18 +49,18 @@ static void release_alt(void) {
     }
 
     alt_pressed = false;
-    send_keycode(LALT, false);
+    invoke_keycode(LALT, false);
 }
 
 static void release_tab_combo(void) {
     if (tab_pressed) {
         tab_pressed = false;
-        send_keycode(TAB, false);
+        invoke_keycode(TAB, false);
     }
 
     if (shift_pressed) {
         shift_pressed = false;
-        send_keycode(LSHFT, false);
+        invoke_keycode(LSHFT, false);
     }
 }
 
@@ -75,7 +85,7 @@ static void reset_alt_timer(void) {
 }
 
 static int task_move_listener(const zmk_event_t *eh) {
-    const struct zmk_keycode_state_changed *ev = as_zmk_keycode_state_changed(eh);
+    const struct zmk_position_state_changed *ev = as_zmk_position_state_changed(eh);
 
     if (ev == NULL || !ev->state) {
         return ZMK_EV_EVENT_BUBBLE;
@@ -86,7 +96,7 @@ static int task_move_listener(const zmk_event_t *eh) {
 }
 
 ZMK_LISTENER(o67r_task_move_listener, task_move_listener);
-ZMK_SUBSCRIPTION(o67r_task_move_listener, zmk_keycode_state_changed);
+ZMK_SUBSCRIPTION(o67r_task_move_listener, zmk_position_state_changed);
 
 static int on_task_move_pressed(struct zmk_behavior_binding *binding,
                                 struct zmk_behavior_binding_event event) {
@@ -100,16 +110,16 @@ static int on_task_move_pressed(struct zmk_behavior_binding *binding,
 
     if (!alt_pressed) {
         alt_pressed = true;
-        send_keycode(LALT, true);
+        invoke_keycode(LALT, true);
     }
 
     if (config->reverse) {
         shift_pressed = true;
-        send_keycode(LSHFT, true);
+        invoke_keycode(LSHFT, true);
     }
 
     tab_pressed = true;
-    send_keycode(TAB, true);
+    invoke_keycode(TAB, true);
 
     k_work_schedule(&tab_release_work, K_MSEC(TASK_MOVE_TAP_MS));
     reset_alt_timer();
