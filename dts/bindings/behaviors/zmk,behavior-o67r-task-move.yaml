@@ -5,6 +5,11 @@ compatible: "zmk,behavior-o67r-task-move"
 include: zero_param.yaml
 
 properties:
+  release-after-ms:
+    type: int
+    default: 2000
+    description: Time in milliseconds to keep Alt pressed after task move input.
+
   reverse:
     type: boolean
     description: Send Alt+Shift+Tab instead of Alt+Tab.

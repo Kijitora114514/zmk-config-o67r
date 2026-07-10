@@ -7,6 +7,7 @@
 #define DT_DRV_COMPAT zmk_behavior_o67r_task_move
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
@@ -18,17 +19,18 @@
 #include <zmk/event_manager.h>
 #include <zmk/events/position_state_changed.h>
 
-#define TASK_MOVE_ALT_TIMEOUT_MS 2000
 #define TASK_MOVE_TAP_MS 30
 #define KEY_PRESS DEVICE_DT_NAME(DT_INST(0, zmk_behavior_key_press))
 
 struct task_move_config {
+    int32_t release_after_ms;
     bool reverse;
 };
 
 static bool alt_pressed;
 static bool shift_pressed;
 static bool tab_pressed;
+static int32_t alt_release_after_ms;
 
 static void invoke_keycode(uint32_t keycode, bool pressed) {
     struct zmk_behavior_binding binding = {
@@ -80,7 +82,7 @@ K_WORK_DELAYABLE_DEFINE(tab_release_work, tab_release_work_handler);
 
 static void reset_alt_timer(void) {
     if (alt_pressed) {
-        k_work_reschedule(&alt_release_work, K_MSEC(TASK_MOVE_ALT_TIMEOUT_MS));
+        k_work_reschedule(&alt_release_work, K_MSEC(alt_release_after_ms));
     }
 }
 
@@ -104,6 +106,8 @@ static int on_task_move_pressed(struct zmk_behavior_binding *binding,
     const struct task_move_config *config = dev->config;
 
     ARG_UNUSED(event);
+
+    alt_release_after_ms = config->release_after_ms;
 
     k_work_cancel_delayable(&tab_release_work);
     release_tab_combo();
@@ -141,6 +145,7 @@ static const struct behavior_driver_api task_move_driver_api = {
 
 #define TASK_MOVE_INST(n)                                                                         \
     static const struct task_move_config task_move_config_##n = {                                  \
+        .release_after_ms = DT_INST_PROP(n, release_after_ms),                                     \
         .reverse = DT_INST_PROP(n, reverse),                                                       \
     };                                                                                             \
     BEHAVIOR_DT_INST_DEFINE(n, NULL, NULL, NULL, &task_move_config_##n, POST_KERNEL,               \
