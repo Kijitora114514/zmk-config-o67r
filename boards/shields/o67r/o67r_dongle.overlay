@@ -19,7 +19,8 @@
     compatible = "zmk,kscan-gpio-direct";
     //wakeup-source;
     input-gpios
-        = <&gpio1 11 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // unlock
+        //= <&gpio1 11 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // unlock
+        = <&gpio0 9 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // unlock
         ;
 };
 
@@ -123,7 +124,9 @@ disp_spi: &spi3 {
 / {
     encoder0: encoder0 {
         compatible = "alps,ec11";
-        a-gpios = <&gpio0  9 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+        //a-gpios = <&gpio0  9 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+        a-gpios = <&gpio1  11 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+        //b-gpios = <&gpio0 10 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
         b-gpios = <&gpio0 10 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
         steps = <15>;// 15 or 30
         status = "okay";
