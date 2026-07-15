@@ -20,8 +20,6 @@
     //wakeup-source;
     input-gpios
         = <&gpio1 11 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)> // unlock        
-        , <&gpio0  9 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>
-        , <&gpio0 10 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>
         ;
 };
 
@@ -125,11 +123,9 @@ disp_spi: &spi3 {
 / {
     encoder0: encoder0 {
         compatible = "alps,ec11";
-        //a-gpios = <&gpio0  9 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>;
-        //b-gpios = <&gpio0 10 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>;
-        a-gpios = <&gpio1  3 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>;
-        b-gpios = <&gpio1  5 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>;
-        steps = <15>;// 15 or 30
+        a-gpios = <&gpio0  9 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>;
+        b-gpios = <&gpio0 10 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>;
+        steps = <30>;// 15 or 30
         status = "okay";
     };
 
