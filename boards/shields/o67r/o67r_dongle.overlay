@@ -123,8 +123,10 @@ disp_spi: &spi3 {
 / {
     encoder0: encoder0 {
         compatible = "alps,ec11";
-        a-gpios = <&gpio0  9 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
-        b-gpios = <&gpio0 10 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+        //a-gpios = <&gpio0  9 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>;
+        //b-gpios = <&gpio0 10 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>;
+        a-gpios = <&gpio0  9 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+        b-gpios = <&gpio0 10 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
         steps = <15>;// 15 or 30
         status = "okay";
     };
