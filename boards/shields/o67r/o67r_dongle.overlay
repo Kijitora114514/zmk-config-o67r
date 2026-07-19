@@ -125,7 +125,7 @@ disp_spi: &spi3 {
         compatible = "alps,ec11";
         a-gpios = <&gpio0  9 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>;
         b-gpios = <&gpio0 10 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>;
-        steps = <30>;// 15 or 30
+        steps = <20>;// 15 or 30
         status = "okay";
     };
 

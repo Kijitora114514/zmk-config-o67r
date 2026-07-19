@@ -594,6 +594,14 @@ static const char *keycode_label(uint32_t keycode, char *fallback, size_t fallba
         return "F10";
     case PSCRN:
         return "PSCR";
+    case K_UNDO:
+        return "UNDO";
+    case K_REDO:
+        return "REDO";
+    case K_COPY:
+        return "COPY";
+    case K_PASTE:
+        return "PAST";
     case GRAVE:
         return "`";
     case MINUS:
